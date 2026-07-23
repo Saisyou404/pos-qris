@@ -176,7 +176,7 @@
                     <textarea name="catatan_kejadian"
                               placeholder="Contoh: Mesin kasir sempat hang, listrik mati 10 menit, dsb. (opsional)"
                               {{ $sudahSubmit ? 'readonly' : '' }}
-                              class="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 focus:bg-white transition-colors resize-y min-h-[90px] leading-normal">{{ $sudahSubmit ? $laporanHariIni->catatan_kejadian : old('catatan_kejadian') }}</textarea>
+                              class="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 focus:bg-white transition-colors resize-y min-h-22.5 leading-normal">{{ $sudahSubmit ? $laporanHariIni->catatan_kejadian : old('catatan_kejadian') }}</textarea>
                     <div class="text-[10.5px] text-slate-400">Kosongkan jika tidak ada kendala hari ini</div>
                 </div>
 
@@ -185,7 +185,7 @@
                     <textarea name="saran"
                               placeholder="Masukan, saran, atau hal yang ingin disampaikan ke admin (opsional)"
                               {{ $sudahSubmit ? 'readonly' : '' }}
-                              class="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 focus:bg-white transition-colors resize-y min-h-[90px] leading-normal">{{ $sudahSubmit ? $laporanHariIni->saran : old('saran') }}</textarea>
+                              class="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 focus:bg-white transition-colors resize-y min-h-22.5 leading-normal">{{ $sudahSubmit ? $laporanHariIni->saran : old('saran') }}</textarea>
                 </div>
 
             </div>
@@ -194,7 +194,7 @@
         {{-- Submit --}}
         @if(!$sudahSubmit)
         <div class="flex gap-2.5">
-            <button type="submit" class="inline-flex items-center gap-1.5 py-3 px-5 rounded-[9px] text-[13px] font-bold cursor-pointer bg-gradient-to-br from-blue-600 to-violet-600 text-white shadow-[0_3px_12px_rgba(37,99,235,0.3)] hover:-translate-y-px hover:shadow-[0_5px_18px_rgba(37,99,235,0.4)] transition-all">
+            <button type="submit" class="inline-flex items-center gap-1.5 py-3 px-5 rounded-[9px] text-[13px] font-bold cursor-pointer bg-linear-to-br from-blue-600 to-violet-600 text-white shadow-[0_3px_12px_rgba(37,99,235,0.3)] hover:-translate-y-px hover:shadow-[0_5px_18px_rgba(37,99,235,0.4)] transition-all">
                 ✅ Submit laporan
             </button>
             <a href="{{ route('kasir.dashboard') }}" class="inline-flex items-center gap-1.5 py-3 px-5 rounded-[9px] text-[13px] font-bold no-underline bg-slate-50 text-slate-500 border border-slate-200 hover:border-red-600 hover:text-red-600 transition-colors">
@@ -211,7 +211,7 @@
     {{-- Kanan: Ringkasan shift --}}
     <div>
         <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm sticky top-20">
-            <div class="py-3.5 px-4.5 bg-gradient-to-br from-blue-600 to-violet-600 text-white">
+            <div class="py-3.5 px-4.5 bg-linear-to-br from-blue-600 to-violet-600 text-white">
                 <div class="text-[13px] font-extrabold mb-0.5">📊 Ringkasan shift hari ini</div>
                 <div class="text-[11px] opacity-75">{{ now()->isoFormat('D MMMM Y') }}</div>
             </div>

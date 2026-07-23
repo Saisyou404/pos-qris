@@ -20,14 +20,14 @@
 {{-- Summary --}}
 <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-5">
     <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
-        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-blue-50">🏷️</div>
+        <div class="w-10.5 h-10.5 rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-blue-50">🏷️</div>
         <div>
             <div class="text-[11px] text-slate-500 font-semibold mb-1 uppercase">Total kategori</div>
             <div class="text-xl font-extrabold leading-none text-blue-600">{{ $kategori->count() }}</div>
         </div>
     </div>
     <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
-        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-green-50">📦</div>
+        <div class="w-10.5 h-10.5 rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-green-50">📦</div>
         <div>
             <div class="text-[11px] text-slate-500 font-semibold mb-1 uppercase">Total produk terdaftar</div>
             <div class="text-xl font-extrabold leading-none text-green-600">{{ $kategori->sum('produk_count') }}</div>
@@ -37,8 +37,8 @@
 
 {{-- Toolbar --}}
 <div class="flex items-center gap-2.5 mb-3.5">
-    <div class="relative flex-1 max-w-[300px]">
-        <span class="absolute left-[11px] top-1/2 -translate-y-1/2 text-[13px] pointer-events-none">🔍</span>
+    <div class="relative flex-1 max-w-75">
+        <span class="absolute left-2.75 top-1/2 -translate-y-1/2 text-[13px] pointer-events-none">🔍</span>
         <input type="text" id="searchInput" placeholder="Cari kategori..." oninput="filterTable()"
                class="w-full py-2.5 pl-9 pr-3.5 bg-white border border-slate-200 rounded-[9px] text-xs text-slate-900 outline-none shadow-sm focus:border-blue-600 transition-colors">
     </div>
@@ -91,7 +91,7 @@
             @empty
             <tr>
                 <td colspan="4">
-                    <div class="text-center py-[50px] px-5 text-slate-500">
+                    <div class="text-center py-12.5 px-5 text-slate-500">
                         <div class="text-[40px] mb-3">🏷️</div>
                         <p class="text-[13px]">Belum ada kategori. <a href="/admin/kategori/create" class="text-blue-600 font-semibold">Tambah sekarang</a></p>
                     </div>

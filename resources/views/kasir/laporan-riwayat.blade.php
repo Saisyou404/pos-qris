@@ -29,7 +29,7 @@
     </div>
     <button type="submit" class="self-end inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold cursor-pointer bg-blue-600 text-white shadow-[0_2px_8px_rgba(37,99,235,0.25)] hover:bg-blue-700 transition-colors">🔍 Filter</button>
     <a href="{{ route('kasir.laporan.riwayat') }}" class="self-end inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold no-underline bg-white text-slate-500 border border-slate-200 hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">↺ Reset</a>
-    <a href="{{ route('kasir.laporan.input') }}" class="ml-auto self-end inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold no-underline bg-gradient-to-br from-blue-600 to-violet-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.3)] hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(37,99,235,0.4)] transition-all">
+    <a href="{{ route('kasir.laporan.input') }}" class="ml-auto self-end inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold no-underline bg-linear-to-br from-blue-600 to-violet-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.3)] hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(37,99,235,0.4)] transition-all">
         ＋ Input laporan hari ini
     </a>
 </div>
@@ -106,23 +106,23 @@
 </div>
 
 @else
-<div class="text-center py-[72px] px-5 text-slate-400">
+<div class="text-center py-18 px-5 text-slate-400">
     <div class="text-5xl mb-3 opacity-30">📋</div>
     <div class="text-[15px] font-bold text-slate-500 mb-1.5">Belum ada laporan</div>
     <div class="text-xs mb-5">Tidak ada laporan pada periode yang dipilih</div>
-    <a href="{{ route('kasir.laporan.input') }}" class="inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold no-underline bg-gradient-to-br from-blue-600 to-violet-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.3)] hover:-translate-y-px transition-all">
+    <a href="{{ route('kasir.laporan.input') }}" class="inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold no-underline bg-linear-to-br from-blue-600 to-violet-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.3)] hover:-translate-y-px transition-all">
         ＋ Buat laporan hari ini
     </a>
 </div>
 @endif
 
 {{-- Modal Detail Laporan --}}
-<div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[1000] items-center justify-center" id="detailModal">
-    <div class="bg-white border border-slate-200 rounded-[18px] w-[520px] max-w-[96vw] max-h-[90vh] overflow-y-auto shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
-        <div class="py-5 px-6 pb-4 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-[1]">
+<div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-1000 items-center justify-center" id="detailModal">
+    <div class="bg-white border border-slate-200 rounded-[18px] w-130 max-w-[96vw] max-h-[90vh] overflow-y-auto shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+        <div class="py-5 px-6 pb-4 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-1">
             <div class="text-[15px] font-extrabold text-slate-900">📋 Detail laporan</div>
             <button onclick="closeModal()"
-                    class="w-[30px] h-[30px] border border-slate-200 bg-slate-50 rounded-lg cursor-pointer text-sm text-slate-500 flex items-center justify-center hover:border-red-600 hover:text-red-600 hover:bg-red-50 transition-colors">✕</button>
+                    class="w-7.5 h-7.5 border border-slate-200 bg-slate-50 rounded-lg cursor-pointer text-sm text-slate-500 flex items-center justify-center hover:border-red-600 hover:text-red-600 hover:bg-red-50 transition-colors">✕</button>
         </div>
         <div class="p-6" id="modalContent">
             <div class="text-center py-10 text-slate-400">Memuat data...</div>

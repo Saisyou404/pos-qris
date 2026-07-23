@@ -8,7 +8,7 @@
 
 <a href="/admin/kategori" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-slate-500 no-underline mb-5 hover:text-blue-600 transition-colors">← Kembali ke daftar kategori</a>
 
-<div class="bg-white border border-slate-200 rounded-2xl p-7 max-w-[480px] shadow-sm">
+<div class="bg-white border border-slate-200 rounded-2xl p-7 max-w-120 shadow-sm">
     <h2 class="text-lg font-extrabold text-slate-900 mb-5">🏷️ Tambah kategori baru</h2>
 
     <form action="/admin/kategori" method="POST">

@@ -8,7 +8,7 @@
 
 <a href="/admin/produk" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-slate-500 no-underline mb-5 hover:text-blue-600 transition-colors">← Kembali ke daftar produk</a>
 
-<div class="bg-white border border-slate-200 rounded-2xl p-7 max-w-[600px] shadow-sm">
+<div class="bg-white border border-slate-200 rounded-2xl p-7 max-w-150 shadow-sm">
     <h2 class="text-lg font-extrabold text-slate-900 mb-5">➕ Tambah produk baru</h2>
 
     @if($errors->any())
@@ -63,7 +63,7 @@
         <div class="mb-4.5">
             <label class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Deskripsi</label>
             <textarea name="deskripsi" placeholder="Deskripsi produk (opsional)"
-                      class="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors resize-y min-h-[80px]">{{ old('deskripsi') }}</textarea>
+                      class="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors resize-y min-h-20">{{ old('deskripsi') }}</textarea>
             @error('deskripsi') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror
         </div>
 

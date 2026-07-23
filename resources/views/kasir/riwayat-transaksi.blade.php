@@ -44,21 +44,21 @@
 {{-- Summary --}}
 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4.5">
     <div class="bg-white border border-slate-200 rounded-xl px-4.5 py-3.5 shadow-sm flex items-center gap-3">
-        <div class="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center text-[17px] shrink-0 bg-blue-50">🛒</div>
+        <div class="w-9.5 h-9.5 rounded-[10px] flex items-center justify-center text-[17px] shrink-0 bg-blue-50">🛒</div>
         <div>
             <div class="text-[10.5px] text-slate-500 font-semibold mb-1">Total transaksi</div>
             <div class="text-lg font-extrabold leading-none text-blue-600">{{ $transaksi->total() }}</div>
         </div>
     </div>
     <div class="bg-white border border-slate-200 rounded-xl px-4.5 py-3.5 shadow-sm flex items-center gap-3">
-        <div class="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center text-[17px] shrink-0 bg-green-50">💰</div>
+        <div class="w-9.5 h-9.5 rounded-[10px] flex items-center justify-center text-[17px] shrink-0 bg-green-50">💰</div>
         <div>
             <div class="text-[10.5px] text-slate-500 font-semibold mb-1">Total pendapatan</div>
             <div class="text-lg font-extrabold leading-none text-green-600">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</div>
         </div>
     </div>
     <div class="bg-white border border-slate-200 rounded-xl px-4.5 py-3.5 shadow-sm flex items-center gap-3">
-        <div class="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center text-[17px] shrink-0 bg-amber-50">📊</div>
+        <div class="w-9.5 h-9.5 rounded-[10px] flex items-center justify-center text-[17px] shrink-0 bg-amber-50">📊</div>
         <div>
             <div class="text-[10.5px] text-slate-500 font-semibold mb-1">Rata-rata / transaksi</div>
             <div class="text-lg font-extrabold leading-none text-slate-900">
@@ -127,7 +127,7 @@
             @empty
             <tr>
                 <td colspan="7">
-                    <div class="text-center py-[52px] px-5 text-slate-400">
+                    <div class="text-center py-13 px-5 text-slate-400">
                         <div class="text-[40px] mb-2.5 opacity-35">🛒</div>
                         <div class="text-sm font-bold mb-1 text-slate-500">Belum ada transaksi</div>
                         <div class="text-xs">Tidak ada transaksi pada periode yang dipilih</div>
@@ -144,12 +144,12 @@
 </div>
 
 {{-- Modal Detail --}}
-<div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[1000] items-center justify-center" id="detailModal">
-    <div class="bg-white border border-slate-200 rounded-[18px] w-[480px] max-w-[96vw] max-h-[90vh] overflow-y-auto shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
-        <div class="py-5 px-6 pb-4 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-[1]">
+<div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-1000 items-center justify-center" id="detailModal">
+    <div class="bg-white border border-slate-200 rounded-[18px] w-120 max-w-[96vw] max-h-[90vh] overflow-y-auto shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+        <div class="py-5 px-6 pb-4 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-1">
             <div class="text-[15px] font-extrabold text-slate-900">🧾 Detail transaksi</div>
             <button onclick="closeModal()"
-                    class="w-[30px] h-[30px] border border-slate-200 bg-slate-50 rounded-lg cursor-pointer text-sm text-slate-500 flex items-center justify-center hover:border-red-600 hover:text-red-600 hover:bg-red-50 transition-colors">✕</button>
+                    class="w-7.5 h-7.5 border border-slate-200 bg-slate-50 rounded-lg cursor-pointer text-sm text-slate-500 flex items-center justify-center hover:border-red-600 hover:text-red-600 hover:bg-red-50 transition-colors">✕</button>
         </div>
         <div class="p-6" id="modalContent">
             <div class="text-center py-10 text-slate-400">Memuat data...</div>
@@ -196,7 +196,7 @@
 
         const items = t.items.map(item => `
             <div class="flex items-center gap-3 py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-[10px] mb-2 last:mb-0">
-                <div class="w-[34px] h-[34px] bg-blue-50 border border-blue-200 rounded-[9px] flex items-center justify-center text-[15px] shrink-0">📦</div>
+                <div class="w-8.5 h-8.5 bg-blue-50 border border-blue-200 rounded-[9px] flex items-center justify-center text-[15px] shrink-0">📦</div>
                 <div class="flex-1 min-w-0">
                     <div class="text-[12.5px] font-bold text-slate-900 mb-0.5">${item.nama}</div>
                     <div class="text-[11px] text-slate-500">Rp ${item.harga.toLocaleString('id-ID')} × ${item.qty}</div>

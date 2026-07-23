@@ -17,8 +17,8 @@
 <body class="font-sans bg-slate-100 text-slate-900 h-screen overflow-hidden flex flex-col m-0 p-0">
 
     {{-- HEADER --}}
-    <div class="h-[58px] bg-white border-b border-slate-200 flex items-center px-5 gap-3 shadow-sm shrink-0">
-        <div class="w-[34px] h-[34px] bg-gradient-to-br from-blue-600 to-violet-600 rounded-[9px] flex items-center justify-center text-base shadow-[0_3px_8px_rgba(37,99,235,0.25)]">🛒</div>
+    <div class="h-14.5 bg-white border-b border-slate-200 flex items-center px-5 gap-3 shadow-sm shrink-0">
+        <div class="w-8.5 h-8.5 bg-linear-to-br from-blue-600 to-violet-600 rounded-[9px] flex items-center justify-center text-base shadow-[0_3px_8px_rgba(37,99,235,0.25)]">🛒</div>
         <div>
             <div class="text-[15px] font-extrabold text-slate-900">Kasir POS</div>
             <div class="text-[10px] text-slate-400">POS QRIS System</div>
@@ -37,11 +37,11 @@
             <div class="relative">
                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none">🔍</span>
                 <input type="text" id="searchInput" placeholder="Cari produk..." onkeyup="searchProduct()"
-                       class="w-full py-2.5 pl-[38px] pr-3.5 bg-white border border-slate-200 rounded-[10px] text-[13px] text-slate-900 outline-none shadow-sm focus:border-blue-600 transition-colors">
+                       class="w-full py-2.5 pl-9.5 pr-3.5 bg-white border border-slate-200 rounded-[10px] text-[13px] text-slate-900 outline-none shadow-sm focus:border-blue-600 transition-colors">
             </div>
 
             <div class="flex gap-2 overflow-x-auto pb-0.5">
-                <button class="category-tab py-1.5 px-4 rounded-full text-xs font-semibold cursor-pointer border whitespace-nowrap shadow-sm transition-colors border-blue-600 bg-blue-600 text-white shadow-[0_3px_10px_rgba(37,99,235,0.3)]"
+                <button class="category-tab py-1.5 px-4 rounded-full text-xs font-semibold cursor-pointer border whitespace-nowrap transition-colors border-blue-600 bg-blue-600 text-white shadow-[0_3px_10px_rgba(37,99,235,0.3)]"
                         onclick="filterCategory('all', this)">Semua</button>
                 @foreach($kategoris as $kategori)
                 <button class="category-tab py-1.5 px-4 rounded-full text-xs font-semibold cursor-pointer border whitespace-nowrap shadow-sm transition-colors border-slate-200 bg-white text-slate-500 hover:border-blue-600 hover:text-blue-600"
@@ -110,7 +110,7 @@
                     </button>
                 </div>
                 <button id="checkoutBtn" onclick="processPayment()" disabled
-                        class="w-full py-3.5 bg-gradient-to-br from-blue-600 to-violet-600 text-white border-0 rounded-[11px] text-sm font-bold cursor-pointer shadow-[0_4px_12px_rgba(37,99,235,0.3)] hover:-translate-y-px hover:shadow-[0_6px_18px_rgba(37,99,235,0.4)] transition-all disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed disabled:translate-y-0 disabled:hover:translate-y-0">
+                        class="w-full py-3.5 bg-linear-to-br from-blue-600 to-violet-600 text-white border-0 rounded-[11px] text-sm font-bold cursor-pointer shadow-[0_4px_12px_rgba(37,99,235,0.3)] hover:-translate-y-px hover:shadow-[0_6px_18px_rgba(37,99,235,0.4)] transition-all disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed disabled:translate-y-0 disabled:hover:translate-y-0">
                     Proses pembayaran →
                 </button>
             </div>
@@ -118,8 +118,8 @@
     </div>
 
     {{-- MODAL: PAYMENT --}}
-    <div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[1000] items-center justify-center" id="paymentModal">
-        <div class="bg-white border border-slate-200 rounded-[18px] p-7 w-[420px] max-w-[95vw] shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+    <div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-1000 items-center justify-center" id="paymentModal">
+        <div class="bg-white border border-slate-200 rounded-[18px] p-7 w-105 max-w-[95vw] shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
             <div class="text-center mb-5">
                 <h3 class="text-lg font-extrabold text-slate-900">💳 Proses pembayaran</h3>
                 <p class="text-xs text-slate-500 mt-1">Pastikan jumlah sudah sesuai sebelum konfirmasi</p>
@@ -157,8 +157,8 @@
     </div>
 
     {{-- MODAL: SUCCESS --}}
-    <div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[1000] items-center justify-center" id="successModal">
-        <div class="bg-white border border-slate-200 rounded-[18px] p-7 w-[420px] max-w-[95vw] shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+    <div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-1000 items-center justify-center" id="successModal">
+        <div class="bg-white border border-slate-200 rounded-[18px] p-7 w-105 max-w-[95vw] shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
             <div class="text-[56px] text-center mb-3">✅</div>
             <div class="text-center mb-5">
                 <h3 class="text-lg font-extrabold text-slate-900">Transaksi berhasil!</h3>

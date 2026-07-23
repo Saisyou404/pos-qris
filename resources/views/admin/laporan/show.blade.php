@@ -7,7 +7,7 @@
 
 <a href="/admin/laporan" class="inline-flex items-center gap-1.5 text-slate-500 text-[13px] font-semibold no-underline py-1.5 px-3 rounded-lg border border-slate-200 bg-white mb-4.5 hover:text-blue-600 hover:border-blue-600 hover:bg-blue-50 transition-colors print:hidden">← Kembali ke laporan</a>
 
-<div class="max-w-[820px] mx-auto">
+<div class="max-w-205 mx-auto">
 
     @php
         $badgeClass = match($transaksi->status) {
@@ -67,7 +67,7 @@
         <div class="p-4">
             @foreach($transaksi->detailTransaksi as $detail)
             <div class="flex items-center gap-3.5 py-3 px-3.5 rounded-[10px] border border-slate-200 bg-slate-50 mb-2 last:mb-0">
-                <div class="w-[38px] h-[38px] rounded-[10px] bg-blue-50 border border-blue-200 flex items-center justify-center text-base shrink-0">🛍️</div>
+                <div class="w-9.5 h-9.5 rounded-[10px] bg-blue-50 border border-blue-200 flex items-center justify-center text-base shrink-0">🛍️</div>
                 <div class="flex-1">
                     <div class="text-[13px] font-bold text-slate-900">{{ $detail->produk->nama ?? 'Produk dihapus' }}</div>
                     <div class="text-[11px] text-slate-400 mt-0.5">Rp {{ number_format($detail->harga_satuan, 0, ',', '.') }} × {{ $detail->jumlah }}</div>

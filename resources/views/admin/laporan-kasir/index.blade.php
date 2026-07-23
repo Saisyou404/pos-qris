@@ -17,7 +17,7 @@
 <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 mb-4.5 flex items-end gap-3 flex-wrap shadow-sm">
     <div class="flex flex-col gap-1.5">
         <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wide">Kasir</span>
-        <select name="kasir_id" class="py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-[12.5px] text-slate-900 outline-none focus:border-blue-600 transition-colors min-w-[160px]">
+        <select name="kasir_id" class="py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-[12.5px] text-slate-900 outline-none focus:border-blue-600 transition-colors min-w-40">
             <option value="all" {{ $kasirId === 'all' ? 'selected' : '' }}>Semua kasir</option>
             @foreach($kasirs as $k)
                 <option value="{{ $k->id }}" {{ (string) $kasirId === (string) $k->id ? 'selected' : '' }}>{{ $k->nama }}</option>
@@ -42,21 +42,21 @@
 {{-- Summary --}}
 <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 mb-4.5">
     <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
-        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-blue-50">📋</div>
+        <div class="w-10.5 h-10.5 rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-blue-50">📋</div>
         <div>
             <div class="text-[11px] text-slate-500 font-semibold mb-1">Total laporan</div>
             <div class="text-xl font-extrabold leading-none text-blue-600">{{ $totalLaporan }}</div>
         </div>
     </div>
     <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
-        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-green-50">💰</div>
+        <div class="w-10.5 h-10.5 rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-green-50">💰</div>
         <div>
             <div class="text-[11px] text-slate-500 font-semibold mb-1">Total pendapatan (sesuai laporan)</div>
             <div class="text-xl font-extrabold leading-none text-green-600">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</div>
         </div>
     </div>
     <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
-        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-red-50">⚠️</div>
+        <div class="w-10.5 h-10.5 rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-red-50">⚠️</div>
         <div>
             <div class="text-[11px] text-slate-500 font-semibold mb-1">Laporan dengan kendala</div>
             <div class="text-xl font-extrabold leading-none text-red-600">{{ $adaKendala }}</div>
@@ -121,7 +121,7 @@
 </div>
 
 @else
-<div class="text-center py-[72px] px-5 text-slate-400">
+<div class="text-center py-18 px-5 text-slate-400">
     <div class="text-5xl mb-3 opacity-30">📋</div>
     <div class="text-[15px] font-bold text-slate-500 mb-1.5">Belum ada laporan</div>
     <div class="text-xs">Tidak ada laporan kasir pada filter yang dipilih</div>
@@ -129,12 +129,12 @@
 @endif
 
 {{-- Modal Detail --}}
-<div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[1000] items-center justify-center" id="detailModal">
-    <div class="bg-white border border-slate-200 rounded-[18px] w-[520px] max-w-[96vw] max-h-[90vh] overflow-y-auto shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
-        <div class="py-5 px-6 pb-4 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-[1]">
+<div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-1000 items-center justify-center" id="detailModal">
+    <div class="bg-white border border-slate-200 rounded-[18px] w-130 max-w-[96vw] max-h-[90vh] overflow-y-auto shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+        <div class="py-5 px-6 pb-4 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-1">
             <div class="text-[15px] font-extrabold text-slate-900">📋 Detail laporan kasir</div>
             <button onclick="closeModal()"
-                    class="w-[30px] h-[30px] border border-slate-200 bg-slate-50 rounded-lg cursor-pointer text-sm text-slate-500 flex items-center justify-center hover:border-red-600 hover:text-red-600 hover:bg-red-50 transition-colors">✕</button>
+                    class="w-7.5 h-7.5 border border-slate-200 bg-slate-50 rounded-lg cursor-pointer text-sm text-slate-500 flex items-center justify-center hover:border-red-600 hover:text-red-600 hover:bg-red-50 transition-colors">✕</button>
         </div>
         <div class="p-6" id="modalContent">
             <div class="text-center py-10 text-slate-400">Memuat data...</div>

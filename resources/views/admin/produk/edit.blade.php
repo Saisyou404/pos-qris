@@ -6,9 +6,17 @@
 
 @section('content')
 
+@php
+    // Helper kecil supaya class border error tidak ditulis dobel (border-red-600
+    // & border-slate-200) berdampingan di satu atribut class — selain lebih
+    // ringkas, ini juga menghindari false-positive "cssConflict" dari linter
+    // Tailwind, yang tidak paham @error/@else adalah exclusive di runtime.
+    $borderClass = fn (string $field) => $errors->has($field) ? 'border-red-600' : 'border-slate-200';
+@endphp
+
 <a href="/admin/produk" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-slate-500 no-underline mb-5 hover:text-blue-600 transition-colors">← Kembali ke daftar produk</a>
 
-<div class="bg-white border border-slate-200 rounded-2xl p-7 max-w-[600px] shadow-sm">
+<div class="bg-white border border-slate-200 rounded-2xl p-7 max-w-150 shadow-sm">
     <h2 class="text-lg font-extrabold text-slate-900 mb-5">✏️ Edit produk</h2>
 
     <form action="/admin/produk/{{ $produk->id }}" method="POST">
@@ -18,14 +26,14 @@
         <div class="mb-4.5">
             <label for="nama" class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Nama produk *</label>
             <input type="text" id="nama" name="nama" value="{{ old('nama', $produk->nama) }}" required
-                class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors @error('nama') border-red-600 @else border-slate-200 @enderror">
+                class="w-full py-2.5 px-3.5 bg-slate-50 border {{ $borderClass('nama') }} rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors">
             @error('nama') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror
         </div>
 
         <div class="mb-4.5">
             <label for="kategori_id" class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Kategori *</label>
             <select id="kategori_id" name="kategori_id" required
-                class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors @error('kategori_id') border-red-600 @else border-slate-200 @enderror">
+                class="w-full py-2.5 px-3.5 bg-slate-50 border {{ $borderClass('kategori_id') }} rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors">
                 <option value="">-- Pilih kategori --</option>
                 @foreach($kategori as $k)
                     <option value="{{ $k->id }}" {{ old('kategori_id', $produk->kategori_id) == $k->id ? 'selected' : '' }}>
@@ -40,14 +48,14 @@
             <div class="mb-4.5">
                 <label for="harga" class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Harga *</label>
                 <input type="number" id="harga" name="harga" value="{{ old('harga', $produk->harga) }}" min="0" step="100" required
-                    class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors @error('harga') border-red-600 @else border-slate-200 @enderror">
+                    class="w-full py-2.5 px-3.5 bg-slate-50 border {{ $borderClass('harga') }} rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors">
                 @error('harga') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror
             </div>
 
             <div class="mb-4.5">
                 <label for="stok" class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Stok *</label>
                 <input type="number" id="stok" name="stok" value="{{ old('stok', $produk->stok) }}" min="0" required
-                    class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors @error('stok') border-red-600 @else border-slate-200 @enderror">
+                    class="w-full py-2.5 px-3.5 bg-slate-50 border {{ $borderClass('stok') }} rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors">
                 @error('stok') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror
             </div>
         </div>

@@ -20,21 +20,21 @@
 {{-- Summary Cards --}}
 <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 mb-5">
     <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
-        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-blue-50">📦</div>
+        <div class="w-10.5 h-10.5 rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-blue-50">📦</div>
         <div>
             <div class="text-[11px] text-slate-500 font-semibold mb-1">Total produk</div>
             <div class="text-xl font-extrabold leading-none text-blue-600">{{ $produk->count() }}</div>
         </div>
     </div>
     <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
-        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-green-50">📊</div>
+        <div class="w-10.5 h-10.5 rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-green-50">📊</div>
         <div>
             <div class="text-[11px] text-slate-500 font-semibold mb-1">Total stok</div>
             <div class="text-xl font-extrabold leading-none text-green-600">{{ number_format($produk->sum('stok'), 0, ',', '.') }} pcs</div>
         </div>
     </div>
     <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
-        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-violet-50">💰</div>
+        <div class="w-10.5 h-10.5 rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-violet-50">💰</div>
         <div>
             <div class="text-[11px] text-slate-500 font-semibold mb-1">Nilai inventori</div>
             <div class="text-xl font-extrabold leading-none text-violet-600">
@@ -46,8 +46,8 @@
 
 {{-- Toolbar --}}
 <div class="flex items-center gap-2.5 mb-3.5 flex-wrap">
-    <div class="relative flex-1 max-w-[300px]">
-        <span class="absolute left-[11px] top-1/2 -translate-y-1/2 text-[13px] pointer-events-none">🔍</span>
+    <div class="relative flex-1 max-w-75">
+        <span class="absolute left-2.75 top-1/2 -translate-y-1/2 text-[13px] pointer-events-none">🔍</span>
         <input type="text" id="searchInput" placeholder="Cari nama produk..." onkeyup="searchTable()"
                class="w-full py-2.5 pl-9 pr-3.5 bg-white border border-slate-200 rounded-[9px] text-xs text-slate-900 outline-none shadow-sm focus:border-blue-600 transition-colors">
     </div>
@@ -119,7 +119,7 @@
             @empty
             <tr>
                 <td colspan="6">
-                    <div class="text-center py-[50px] px-5 text-slate-400">
+                    <div class="text-center py-12.5 px-5 text-slate-400">
                         <div class="text-[42px] mb-2.5 opacity-40">📦</div>
                         <div class="text-[13px] font-semibold mb-1.5 text-slate-500">Belum ada produk</div>
                         <div class="text-xs">

@@ -19,12 +19,12 @@
     </div>
     <div class="p-4.5">
         <form action="/admin/laporan" method="GET" class="flex flex-wrap gap-3 items-end">
-            <div class="flex flex-col gap-1.5 flex-1 min-w-[180px]">
+            <div class="flex flex-col gap-1.5 flex-1 min-w-45">
                 <label for="start_date" class="text-[11px] font-bold text-slate-500 tracking-wide">Tanggal mulai</label>
                 <input type="date" id="start_date" name="start_date" value="{{ $startDate }}"
                        class="py-2 px-2.5 border border-slate-200 rounded-lg text-[13px] text-slate-900 bg-slate-50 outline-none transition-colors focus:border-blue-600 focus:bg-white focus:shadow-[0_0_0_3px_rgba(37,99,235,0.1)]">
             </div>
-            <div class="flex flex-col gap-1.5 flex-1 min-w-[180px]">
+            <div class="flex flex-col gap-1.5 flex-1 min-w-45">
                 <label for="end_date" class="text-[11px] font-bold text-slate-500 tracking-wide">Tanggal akhir</label>
                 <input type="date" id="end_date" name="end_date" value="{{ $endDate }}"
                        class="py-2 px-2.5 border border-slate-200 rounded-lg text-[13px] text-slate-900 bg-slate-50 outline-none transition-colors focus:border-blue-600 focus:bg-white focus:shadow-[0_0_0_3px_rgba(37,99,235,0.1)]">
@@ -38,21 +38,21 @@
 {{-- Summary Stats --}}
 <div class="grid gap-3.5 mb-5" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
     <div class="bg-white border border-slate-200 rounded-2xl p-4.5 shadow-sm flex items-center gap-3.5">
-        <div class="w-[46px] h-[46px] rounded-xl flex items-center justify-center text-xl shrink-0 bg-blue-50 border border-blue-200">🧾</div>
+        <div class="w-11.5 h-11.5 rounded-xl flex items-center justify-center text-xl shrink-0 bg-blue-50 border border-blue-200">🧾</div>
         <div>
             <div class="text-[11px] font-semibold text-slate-400 mb-1">Total transaksi</div>
             <div class="text-[22px] font-extrabold leading-none text-slate-900">{{ $totalTransaksi }}</div>
         </div>
     </div>
     <div class="bg-white border border-slate-200 rounded-2xl p-4.5 shadow-sm flex items-center gap-3.5">
-        <div class="w-[46px] h-[46px] rounded-xl flex items-center justify-center text-xl shrink-0 bg-green-50 border border-green-200">💰</div>
+        <div class="w-11.5 h-11.5 rounded-xl flex items-center justify-center text-xl shrink-0 bg-green-50 border border-green-200">💰</div>
         <div>
             <div class="text-[11px] font-semibold text-slate-400 mb-1">Total pendapatan</div>
             <div class="text-base font-extrabold leading-none text-slate-900">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</div>
         </div>
     </div>
     <div class="bg-white border border-slate-200 rounded-2xl p-4.5 shadow-sm flex items-center gap-3.5">
-        <div class="w-[46px] h-[46px] rounded-xl flex items-center justify-center text-xl shrink-0 bg-violet-50 border border-violet-200">📦</div>
+        <div class="w-11.5 h-11.5 rounded-xl flex items-center justify-center text-xl shrink-0 bg-violet-50 border border-violet-200">📦</div>
         <div>
             <div class="text-[11px] font-semibold text-slate-400 mb-1">Produk terjual</div>
             <div class="text-[22px] font-extrabold leading-none text-slate-900">{{ $totalProdukTerjual }}</div>
@@ -69,7 +69,7 @@
             <span class="text-[13px] font-bold text-slate-900">Grafik penjualan (7 hari terakhir)</span>
         </div>
         <div class="p-4.5">
-            <div class="relative h-[260px]">
+            <div class="relative h-65">
                 <canvas id="salesChart"></canvas>
             </div>
         </div>

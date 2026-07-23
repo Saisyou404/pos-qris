@@ -16,7 +16,7 @@
 </head>
 <body class="font-mono text-xs bg-[#f0f0f0] flex flex-col items-center p-5" style="font-family:'Courier New',monospace">
 
-<div class="struk-box bg-white w-[300px] px-4 py-5">
+<div class="struk-box bg-white w-75 px-4 py-5">
     {{-- Header Toko --}}
     <div class="text-center mb-3">
         <div class="text-[15px] font-bold font-sans">{{ config('app.name', 'Warung Gerbang Merapi') }}</div>

@@ -7,7 +7,7 @@
 @section('content')
 
 {{-- Welcome Bar --}}
-<div class="bg-gradient-to-br from-blue-700 to-violet-600 rounded-2xl px-6 py-5.5 flex items-center justify-between mb-5 text-white shadow-[0_4px_16px_rgba(29,78,216,0.25)]">
+<div class="bg-linear-to-br from-blue-700 to-violet-600 rounded-2xl px-6 py-5.5 flex items-center justify-between mb-5 text-white shadow-[0_4px_16px_rgba(29,78,216,0.25)]">
     <div>
         <h2 class="text-lg font-extrabold mb-1">Selamat datang, Admin! 👋</h2>
         <p class="text-xs opacity-80">Berikut ringkasan aktivitas toko hari ini</p>
@@ -50,7 +50,7 @@
 <div class="text-[11px] font-bold tracking-wide uppercase text-slate-400 mb-2.5">Menu utama</div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
     <a href="/admin/produk" class="bg-white border border-slate-200 border-l-[3px] border-l-blue-600 rounded-2xl p-5 no-underline text-slate-900 flex items-center gap-3.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
-        <div class="w-[46px] h-[46px] shrink-0 rounded-xl flex items-center justify-center text-xl bg-blue-50">📦</div>
+        <div class="w-11.5 h-11.5 shrink-0 rounded-xl flex items-center justify-center text-xl bg-blue-50">📦</div>
         <div>
             <div class="text-sm font-bold mb-0.5">Manajemen produk</div>
             <div class="text-[11px] text-slate-500">Kelola produk & stok inventori</div>
@@ -58,7 +58,7 @@
         <div class="ml-auto text-base text-slate-400">→</div>
     </a>
     <a href="/admin/kategori" class="bg-white border border-slate-200 border-l-[3px] border-l-green-600 rounded-2xl p-5 no-underline text-slate-900 flex items-center gap-3.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
-        <div class="w-[46px] h-[46px] shrink-0 rounded-xl flex items-center justify-center text-xl bg-green-50">🏷️</div>
+        <div class="w-11.5 h-11.5 shrink-0 rounded-xl flex items-center justify-center text-xl bg-green-50">🏷️</div>
         <div>
             <div class="text-sm font-bold mb-0.5">Manajemen kategori</div>
             <div class="text-[11px] text-slate-500">Kelola kategori produk</div>
@@ -66,7 +66,7 @@
         <div class="ml-auto text-base text-slate-400">→</div>
     </a>
     <a href="/admin/laporan" class="bg-white border border-slate-200 border-l-[3px] border-l-violet-600 rounded-2xl p-5 no-underline text-slate-900 flex items-center gap-3.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
-        <div class="w-[46px] h-[46px] shrink-0 rounded-xl flex items-center justify-center text-xl bg-violet-50">📊</div>
+        <div class="w-11.5 h-11.5 shrink-0 rounded-xl flex items-center justify-center text-xl bg-violet-50">📊</div>
         <div>
             <div class="text-sm font-bold mb-0.5">Laporan transaksi</div>
             <div class="text-[11px] text-slate-500">Lihat laporan & statistik</div>

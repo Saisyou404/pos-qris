@@ -6,7 +6,7 @@
 
 @section('content')
 
-<div class="bg-gradient-to-br from-blue-600 to-violet-600 rounded-2xl px-6 py-5.5 flex items-center justify-between mb-5 text-white">
+<div class="bg-linear-to-br from-blue-600 to-violet-600 rounded-2xl px-6 py-5.5 flex items-center justify-between mb-5 text-white">
     <div>
         <h2 class="text-lg font-extrabold mb-1">Selamat datang, {{ $kasirName }} 👋</h2>
         <p class="text-xs opacity-85">Semangat melayani pelanggan hari ini</p>
@@ -19,7 +19,7 @@
 
 <div class="text-xs font-bold uppercase mb-2.5 text-slate-500">Aksi cepat</div>
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
-    <a href="{{ route('kasir.transaksi') }}" class="rounded-xl p-4.5 no-underline text-slate-900 transition-all bg-gradient-to-br from-blue-50 to-violet-50 border border-blue-200 hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)]">
+    <a href="{{ route('kasir.transaksi') }}" class="rounded-xl p-4.5 no-underline text-slate-900 transition-all bg-linear-to-br from-blue-50 to-violet-50 border border-blue-200 hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)]">
         <div class="text-xl mb-2.5">🛒</div>
         <div class="text-[13px] font-bold mb-1">Buka kasir</div>
         <div class="text-[11px] text-slate-500">Mulai transaksi penjualan</div>
