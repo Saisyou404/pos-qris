@@ -63,14 +63,18 @@ class ProdukController extends Controller
         return redirect('/admin/produk')->with('success', 'Produk berhasil diupdate.');
     }
 
-    // Hapus produk (Force Delete dengan Cascade)
+    // Nonaktifkan produk (soft delete — riwayat transaksi lama TETAP aman)
     public function destroy($id)
     {
         $produk = Produk::findOrFail($id);
-        
-        // Hapus produk (otomatis menghapus detail_transaksi yang terkait)
+
+        // Karena model Produk pakai SoftDeletes, ini tidak menghapus baris
+        // secara permanen — hanya mengisi kolom `deleted_at`. Produk akan
+        // otomatis hilang dari daftar & tidak bisa dipilih di kasir, tapi
+        // detail_transaksi historis yang mereferensikannya tetap utuh
+        // (FK produk_id sudah RESTRICT lagi, bukan CASCADE).
         $produk->delete();
 
-        return redirect('/admin/produk')->with('success', 'Produk dan semua data transaksi terkait berhasil dihapus.');
+        return redirect('/admin/produk')->with('success', 'Produk berhasil dinonaktifkan. Riwayat transaksi terkait tetap aman.');
     }
 }

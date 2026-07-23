@@ -4,226 +4,40 @@
 @section('page_title', 'Manajemen Produk')
 @section('page_sub', 'Kelola produk dan stok inventori')
 
-@section('styles')
-<style>
-    /* Page Header */
-    .page-header {
-        display: flex; align-items: center; justify-content: space-between;
-        margin-bottom: 20px;
-    }
-    .page-title-wrap h2 { font-size: 20px; font-weight: 800; color: var(--text); }
-    .page-title-wrap p  { font-size: 12px; color: var(--text2); margin-top: 2px; }
-
-    /* Buttons */
-    .btn {
-        display: inline-flex; align-items: center; gap: 7px;
-        padding: 9px 16px;
-        border-radius: 9px;
-        font-family: inherit; font-size: 12px; font-weight: 600;
-        cursor: pointer; border: none; text-decoration: none;
-        transition: all 0.15s;
-    }
-    .btn-primary {
-        background: var(--accent); color: #fff;
-        box-shadow: 0 3px 10px rgba(37,99,235,0.25);
-    }
-    .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 5px 14px rgba(37,99,235,0.35); }
-
-    /* Summary Cards */
-    .summary-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 14px; margin-bottom: 20px;
-    }
-
-    .summary-card {
-        background: var(--bg2);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 16px 20px;
-        box-shadow: var(--shadow);
-        display: flex; align-items: center; gap: 14px;
-    }
-
-    .summary-icon {
-        width: 42px; height: 42px;
-        border-radius: 11px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 20px; flex-shrink: 0;
-    }
-
-    .summary-label { font-size: 11px; color: var(--text2); font-weight: 600; margin-bottom: 4px; }
-    .summary-value { font-size: 20px; font-weight: 800; color: var(--text); line-height: 1; }
-
-    /* Toolbar */
-    .toolbar {
-        display: flex; align-items: center; gap: 10px;
-        margin-bottom: 14px; flex-wrap: wrap;
-    }
-
-    .search-wrap { position: relative; flex: 1; max-width: 300px; }
-    .search-wrap input {
-        width: 100%;
-        padding: 9px 14px 9px 36px;
-        background: var(--bg2);
-        border: 1px solid var(--border);
-        border-radius: 9px;
-        font-family: inherit; font-size: 12px;
-        color: var(--text); outline: none;
-        transition: border-color 0.15s;
-        box-shadow: var(--shadow);
-    }
-    .search-wrap input:focus { border-color: var(--accent); }
-    .search-icon {
-        position: absolute; left: 11px; top: 50%;
-        transform: translateY(-50%); font-size: 13px; pointer-events: none;
-    }
-
-    .filter-select {
-        padding: 9px 14px;
-        background: var(--bg2);
-        border: 1px solid var(--border);
-        border-radius: 9px;
-        font-family: inherit; font-size: 12px;
-        color: var(--text); outline: none; cursor: pointer;
-        box-shadow: var(--shadow);
-        transition: border-color 0.15s;
-    }
-    .filter-select:focus { border-color: var(--accent); }
-
-    /* Table */
-    .table-card {
-        background: var(--bg2);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        overflow: hidden;
-        box-shadow: var(--shadow);
-        margin-bottom: 20px;
-    }
-
-    table { width: 100%; border-collapse: collapse; }
-
-    thead { background: var(--bg3); }
-
-    th {
-        padding: 11px 16px;
-        text-align: left;
-        font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
-        text-transform: uppercase; color: var(--text3);
-        border-bottom: 1px solid var(--border);
-        white-space: nowrap;
-    }
-
-    td {
-        padding: 13px 16px;
-        font-size: 12.5px;
-        border-bottom: 1px solid var(--border);
-        vertical-align: middle;
-        color: var(--text);
-    }
-
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #f8fafc; }
-
-    .prod-name   { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
-    .prod-desc   { font-size: 11px; color: var(--text3); }
-
-    .cat-badge {
-        display: inline-block;
-        padding: 3px 10px;
-        background: var(--accent-light);
-        color: var(--accent);
-        border-radius: 99px;
-        font-size: 10.5px; font-weight: 700;
-    }
-
-    .stock-badge {
-        display: inline-flex; align-items: center; gap: 4px;
-        padding: 4px 10px;
-        border-radius: 99px;
-        font-size: 11px; font-weight: 700;
-    }
-    .stock-high   { background: #f0fdf4; color: #16a34a; }
-    .stock-medium { background: #fffbeb; color: #d97706; }
-    .stock-low    { background: #fef2f2; color: #dc2626; }
-
-    .price-text { font-weight: 700; color: var(--accent); }
-
-    .action-btns { display: flex; gap: 6px; justify-content: center; }
-
-    .icon-btn {
-        display: inline-flex; align-items: center; gap: 5px;
-        padding: 6px 12px;
-        border-radius: 7px;
-        font-size: 11px; font-weight: 600;
-        cursor: pointer; text-decoration: none;
-        border: 1px solid var(--border);
-        background: var(--bg3);
-        color: var(--text2);
-        transition: all 0.15s;
-        white-space: nowrap;
-    }
-    .icon-btn:hover       { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-    .icon-btn.danger:hover{ border-color: var(--danger); color: var(--danger); background: #fef2f2; }
-
-    /* Empty state */
-    .empty-state {
-        text-align: center; padding: 50px 20px;
-        color: var(--text3);
-    }
-    .empty-icon { font-size: 42px; margin-bottom: 10px; opacity: 0.4; }
-    .empty-text { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text2); }
-    .empty-sub  { font-size: 12px; }
-
-    /* Table Footer */
-    .table-footer {
-        padding: 12px 16px;
-        border-top: 1px solid var(--border);
-        display: flex; align-items: center; justify-content: space-between;
-        background: var(--bg3);
-        font-size: 11.5px; color: var(--text2);
-    }
-
-    @media (max-width: 900px) {
-        .summary-grid { grid-template-columns: 1fr; }
-    }
-</style>
-@endsection
-
 @section('content')
 
 {{-- Page Header --}}
-<div class="page-header">
-    <div class="page-title-wrap">
-        <h2>Manajemen Produk</h2>
-        <p>Kelola data produk dan stok inventori toko</p>
+<div class="flex items-center justify-between mb-5">
+    <div>
+        <h2 class="text-xl font-extrabold text-slate-900">Manajemen Produk</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Kelola data produk dan stok inventori toko</p>
     </div>
-    <a href="/admin/produk/create" class="btn btn-primary">
-        ＋ Tambah Produk
+    <a href="/admin/produk/create" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[9px] text-xs font-semibold no-underline bg-blue-600 text-white shadow-[0_3px_10px_rgba(37,99,235,0.25)] hover:bg-blue-700 hover:-translate-y-px transition-all">
+        ＋ Tambah produk
     </a>
 </div>
 
 {{-- Summary Cards --}}
-<div class="summary-grid">
-    <div class="summary-card">
-        <div class="summary-icon" style="background:#eff6ff">📦</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 mb-5">
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
+        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-blue-50">📦</div>
         <div>
-            <div class="summary-label">Total Produk</div>
-            <div class="summary-value" style="color:#2563eb">{{ $produk->count() }}</div>
+            <div class="text-[11px] text-slate-500 font-semibold mb-1">Total produk</div>
+            <div class="text-xl font-extrabold leading-none text-blue-600">{{ $produk->count() }}</div>
         </div>
     </div>
-    <div class="summary-card">
-        <div class="summary-icon" style="background:#f0fdf4">📊</div>
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
+        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-green-50">📊</div>
         <div>
-            <div class="summary-label">Total Stok</div>
-            <div class="summary-value" style="color:#16a34a">{{ number_format($produk->sum('stok'), 0, ',', '.') }} pcs</div>
+            <div class="text-[11px] text-slate-500 font-semibold mb-1">Total stok</div>
+            <div class="text-xl font-extrabold leading-none text-green-600">{{ number_format($produk->sum('stok'), 0, ',', '.') }} pcs</div>
         </div>
     </div>
-    <div class="summary-card">
-        <div class="summary-icon" style="background:#faf5ff">💰</div>
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
+        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-violet-50">💰</div>
         <div>
-            <div class="summary-label">Nilai Inventori</div>
-            <div class="summary-value" style="color:#7c3aed">
+            <div class="text-[11px] text-slate-500 font-semibold mb-1">Nilai inventori</div>
+            <div class="text-xl font-extrabold leading-none text-violet-600">
                 Rp {{ number_format($produk->sum(fn($p) => $p->harga * $p->stok), 0, ',', '.') }}
             </div>
         </div>
@@ -231,67 +45,73 @@
 </div>
 
 {{-- Toolbar --}}
-<div class="toolbar">
-    <div class="search-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="Cari nama produk..." onkeyup="searchTable()">
+<div class="flex items-center gap-2.5 mb-3.5 flex-wrap">
+    <div class="relative flex-1 max-w-[300px]">
+        <span class="absolute left-[11px] top-1/2 -translate-y-1/2 text-[13px] pointer-events-none">🔍</span>
+        <input type="text" id="searchInput" placeholder="Cari nama produk..." onkeyup="searchTable()"
+               class="w-full py-2.5 pl-9 pr-3.5 bg-white border border-slate-200 rounded-[9px] text-xs text-slate-900 outline-none shadow-sm focus:border-blue-600 transition-colors">
     </div>
-    <select class="filter-select" id="stockFilter" onchange="filterStock()">
-        <option value="all">Semua Stok</option>
-        <option value="high">Stok Aman (> 20)</option>
-        <option value="medium">Stok Sedang (11–20)</option>
-        <option value="low">Stok Rendah (≤ 10)</option>
+    <select id="stockFilter" onchange="filterStock()"
+            class="py-2.5 px-3.5 bg-white border border-slate-200 rounded-[9px] text-xs text-slate-900 outline-none cursor-pointer shadow-sm focus:border-blue-600 transition-colors">
+        <option value="all">Semua stok</option>
+        <option value="high">Stok aman (&gt; 20)</option>
+        <option value="medium">Stok sedang (11–20)</option>
+        <option value="low">Stok rendah (≤ 10)</option>
     </select>
 </div>
 
 {{-- Table --}}
-<div class="table-card">
-    <table id="produkTable">
-        <thead>
+<div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm mb-5">
+    <table id="produkTable" class="w-full border-collapse">
+        <thead class="bg-slate-50">
             <tr>
-                <th style="width:48px">No</th>
-                <th>Nama Produk</th>
-                <th>Kategori</th>
-                <th>Harga</th>
-                <th>Stok</th>
-                <th style="text-align:center">Aksi</th>
+                <th class="w-12 py-2.5 px-4 text-left text-[10px] font-bold tracking-wider uppercase text-slate-400 border-b border-slate-200 whitespace-nowrap">No</th>
+                <th class="py-2.5 px-4 text-left text-[10px] font-bold tracking-wider uppercase text-slate-400 border-b border-slate-200 whitespace-nowrap">Nama produk</th>
+                <th class="py-2.5 px-4 text-left text-[10px] font-bold tracking-wider uppercase text-slate-400 border-b border-slate-200 whitespace-nowrap">Kategori</th>
+                <th class="py-2.5 px-4 text-left text-[10px] font-bold tracking-wider uppercase text-slate-400 border-b border-slate-200 whitespace-nowrap">Harga</th>
+                <th class="py-2.5 px-4 text-left text-[10px] font-bold tracking-wider uppercase text-slate-400 border-b border-slate-200 whitespace-nowrap">Stok</th>
+                <th class="py-2.5 px-4 text-center text-[10px] font-bold tracking-wider uppercase text-slate-400 border-b border-slate-200 whitespace-nowrap">Aksi</th>
             </tr>
         </thead>
         <tbody>
             @forelse($produk as $p)
-            <tr data-stok="{{ $p->stok }}">
-                <td style="color:var(--text3);font-size:12px">{{ $loop->iteration }}</td>
-                <td>
-                    <div class="prod-name">{{ $p->nama }}</div>
+            <tr data-stok="{{ $p->stok }}" class="hover:bg-slate-50">
+                <td class="py-3.5 px-4 text-xs border-b border-slate-200 align-middle text-slate-400">{{ $loop->iteration }}</td>
+                <td class="py-3.5 px-4 text-[12.5px] border-b border-slate-200 align-middle text-slate-900">
+                    <div class="prod-name font-bold text-[13px] mb-0.5">{{ $p->nama }}</div>
                     @if($p->deskripsi)
-                    <div class="prod-desc">{{ Str::limit($p->deskripsi, 60) }}</div>
+                    <div class="text-[11px] text-slate-400">{{ Str::limit($p->deskripsi, 60) }}</div>
                     @endif
                 </td>
-                <td>
-                    <span class="cat-badge">{{ $p->kategori->nama }}</span>
+                <td class="py-3.5 px-4 text-[12.5px] border-b border-slate-200 align-middle">
+                    <span class="inline-block py-0.5 px-2.5 bg-blue-50 text-blue-600 rounded-full text-[10.5px] font-bold">{{ $p->kategori->nama }}</span>
                 </td>
-                <td>
-                    <span class="price-text">Rp {{ number_format($p->harga, 0, ',', '.') }}</span>
+                <td class="py-3.5 px-4 text-[12.5px] border-b border-slate-200 align-middle">
+                    <span class="font-bold text-blue-600">Rp {{ number_format($p->harga, 0, ',', '.') }}</span>
                 </td>
-                <td>
+                <td class="py-3.5 px-4 text-[12.5px] border-b border-slate-200 align-middle">
                     @if($p->stok > 20)
-                        <span class="stock-badge stock-high">● {{ $p->stok }} pcs</span>
+                        <span class="inline-flex items-center gap-1 py-1 px-2.5 rounded-full text-[11px] font-bold bg-green-50 text-green-600">● {{ $p->stok }} pcs</span>
                     @elseif($p->stok > 10)
-                        <span class="stock-badge stock-medium">● {{ $p->stok }} pcs</span>
+                        <span class="inline-flex items-center gap-1 py-1 px-2.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-600">● {{ $p->stok }} pcs</span>
                     @else
-                        <span class="stock-badge stock-low">⚠ {{ $p->stok }} pcs</span>
+                        <span class="inline-flex items-center gap-1 py-1 px-2.5 rounded-full text-[11px] font-bold bg-red-50 text-red-600">⚠ {{ $p->stok }} pcs</span>
                     @endif
                 </td>
-                <td>
-                    <div class="action-btns">
-                        <a href="/admin/produk/{{ $p->id }}/edit" class="icon-btn">
+                <td class="py-3.5 px-4 text-[12.5px] border-b border-slate-200 align-middle">
+                    <div class="flex gap-1.5 justify-center">
+                        <a href="/admin/produk/{{ $p->id }}/edit"
+                           class="inline-flex items-center gap-1 py-1.5 px-3 rounded-lg text-[11px] font-semibold no-underline border border-slate-200 bg-slate-50 text-slate-500 hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50 transition-colors whitespace-nowrap">
                             ✏️ Edit
                         </a>
                         <form action="/admin/produk/{{ $p->id }}" method="POST" class="inline"
-                              onsubmit="return confirm('Yakin ingin menghapus produk ini? Semua data transaksi terkait juga akan terhapus.')">
+                              onsubmit="return confirm('Nonaktifkan produk ini? Produk tidak akan tampil lagi di kasir, tapi riwayat transaksi yang sudah ada tetap aman.')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="icon-btn danger">🗑 Hapus</button>
+                            <button type="submit"
+                                    class="inline-flex items-center gap-1 py-1.5 px-3 rounded-lg text-[11px] font-semibold cursor-pointer border border-slate-200 bg-slate-50 text-slate-500 hover:border-red-600 hover:text-red-600 hover:bg-red-50 transition-colors whitespace-nowrap">
+                                🚫 Nonaktifkan
+                            </button>
                         </form>
                     </div>
                 </td>
@@ -299,11 +119,11 @@
             @empty
             <tr>
                 <td colspan="6">
-                    <div class="empty-state">
-                        <div class="empty-icon">📦</div>
-                        <div class="empty-text">Belum ada produk</div>
-                        <div class="empty-sub">
-                            <a href="/admin/produk/create" style="color:var(--accent);font-weight:600">
+                    <div class="text-center py-[50px] px-5 text-slate-400">
+                        <div class="text-[42px] mb-2.5 opacity-40">📦</div>
+                        <div class="text-[13px] font-semibold mb-1.5 text-slate-500">Belum ada produk</div>
+                        <div class="text-xs">
+                            <a href="/admin/produk/create" class="text-blue-600 font-semibold">
                                 + Tambah produk pertama
                             </a>
                         </div>
@@ -314,7 +134,7 @@
         </tbody>
     </table>
 
-    <div class="table-footer">
+    <div class="py-3 px-4 border-t border-slate-200 flex items-center justify-between bg-slate-50 text-[11.5px] text-slate-500">
         <span>Total <strong>{{ $produk->count() }}</strong> produk</span>
         <span id="filteredCount"></span>
     </div>

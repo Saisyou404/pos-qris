@@ -4,170 +4,79 @@
 @section('page_title', 'Dashboard Kasir')
 @section('page_sub', 'Selamat datang, ' . $kasirName)
 
-@section('styles')
-<style>
-.welcome-bar{
-    background:linear-gradient(135deg,#2563eb 0%,#7c3aed 100%);
-    border-radius:14px;
-    padding:22px 26px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-    color:#fff;
-}
-.welcome-info h2{font-size:18px;font-weight:800;margin-bottom:4px;}
-.welcome-info p{font-size:12px;opacity:.85;}
-
-.datetime-box{text-align:right;}
-.clock{font-size:26px;font-weight:800;}
-.datex{font-size:11px;opacity:.85;margin-top:4px;}
-
-.section-title{
-    font-size:12px;
-    font-weight:700;
-    text-transform:uppercase;
-    margin-bottom:10px;
-    color:#64748b;
-}
-
-.actions-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:12px;
-    margin-bottom:20px;
-}
-
-.action-card{
-    background:#fff;
-    border:1px solid #e5e7eb;
-    border-radius:12px;
-    padding:18px;
-    text-decoration:none;
-    color:#111827;
-    transition:.2s;
-}
-.action-card:hover{
-    transform:translateY(-3px);
-    box-shadow:0 8px 20px rgba(0,0,0,.05);
-}
-.action-card.primary{
-    background:linear-gradient(135deg,#eff6ff,#f5f3ff);
-    border-color:#bfdbfe;
-}
-.action-icon{
-    font-size:22px;
-    margin-bottom:10px;
-}
-.action-title{font-size:13px;font-weight:700;margin-bottom:4px;}
-.action-desc{font-size:11px;color:#6b7280;}
-
-.card{
-    background:#fff;
-    border:1px solid #e5e7eb;
-    border-radius:12px;
-    overflow:hidden;
-}
-.card-header{
-    padding:14px 18px;
-    border-bottom:1px solid #e5e7eb;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-.card-title{font-weight:700;font-size:13px;}
-.card-link{font-size:11px;color:#2563eb;text-decoration:none;}
-
-table{width:100%;border-collapse:collapse;}
-th,td{padding:10px 14px;font-size:12px;border-bottom:1px solid #f1f5f9;}
-th{background:#f8fafc;text-transform:uppercase;font-size:10px;color:#64748b;}
-
-.badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;}
-.badge-success{background:#dcfce7;color:#15803d;}
-.badge-warning{background:#fef9c3;color:#a16207;}
-.badge-danger{background:#fee2e2;color:#b91c1c;}
-
-.empty-state{text-align:center;padding:30px;color:#9ca3af;}
-
-@media(max-width:1100px){
-    .actions-grid{grid-template-columns:repeat(2,1fr);}
-}
-</style>
-@endsection
-
 @section('content')
 
-<div class="welcome-bar">
-    <div class="welcome-info">
-        <h2>Selamat Datang, {{ $kasirName }} 👋</h2>
-        <p>Semangat melayani pelanggan hari ini</p>
+<div class="bg-gradient-to-br from-blue-600 to-violet-600 rounded-2xl px-6 py-5.5 flex items-center justify-between mb-5 text-white">
+    <div>
+        <h2 class="text-lg font-extrabold mb-1">Selamat datang, {{ $kasirName }} 👋</h2>
+        <p class="text-xs opacity-85">Semangat melayani pelanggan hari ini</p>
     </div>
-    <div class="datetime-box">
-        <div class="clock" id="clock">00:00:00</div>
-        <div class="datex" id="datex">—</div>
+    <div class="text-right">
+        <div class="text-2xl font-extrabold" id="clock">00:00:00</div>
+        <div class="text-[11px] opacity-85 mt-1" id="datex">—</div>
     </div>
 </div>
 
-<div class="section-title">Aksi Cepat</div>
-<div class="actions-grid">
-    <a href="{{ route('kasir.transaksi') }}" class="action-card primary">
-        <div class="action-icon">🛒</div>
-        <div class="action-title">Buka Kasir</div>
-        <div class="action-desc">Mulai transaksi penjualan</div>
+<div class="text-xs font-bold uppercase mb-2.5 text-slate-500">Aksi cepat</div>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+    <a href="{{ route('kasir.transaksi') }}" class="rounded-xl p-4.5 no-underline text-slate-900 transition-all bg-gradient-to-br from-blue-50 to-violet-50 border border-blue-200 hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)]">
+        <div class="text-xl mb-2.5">🛒</div>
+        <div class="text-[13px] font-bold mb-1">Buka kasir</div>
+        <div class="text-[11px] text-slate-500">Mulai transaksi penjualan</div>
     </a>
 
-    <a href="{{ route('kasir.riwayat') }}" class="action-card">
-        <div class="action-icon">📋</div>
-        <div class="action-title">Riwayat Transaksi</div>
-        <div class="action-desc">Lihat transaksi hari ini</div>
+    <a href="{{ route('kasir.riwayat') }}" class="bg-white rounded-xl p-4.5 border border-slate-200 no-underline text-slate-900 transition-all hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)]">
+        <div class="text-xl mb-2.5">📋</div>
+        <div class="text-[13px] font-bold mb-1">Riwayat transaksi</div>
+        <div class="text-[11px] text-slate-500">Lihat transaksi hari ini</div>
     </a>
 
-    <a href="{{ route('kasir.laporan.input') }}" class="action-card">
-        <div class="action-icon">📝</div>
-        <div class="action-title">Input Laporan</div>
-        <div class="action-desc">Submit laporan harian</div>
+    <a href="{{ route('kasir.laporan.input') }}" class="bg-white rounded-xl p-4.5 border border-slate-200 no-underline text-slate-900 transition-all hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)]">
+        <div class="text-xl mb-2.5">📝</div>
+        <div class="text-[13px] font-bold mb-1">Input laporan</div>
+        <div class="text-[11px] text-slate-500">Submit laporan harian</div>
     </a>
 
-    <a href="{{ route('kasir.laporan.riwayat') }}" class="action-card">
-        <div class="action-icon">📊</div>
-        <div class="action-title">Riwayat Laporan</div>
-        <div class="action-desc">Lihat laporan sebelumnya</div>
+    <a href="{{ route('kasir.laporan.riwayat') }}" class="bg-white rounded-xl p-4.5 border border-slate-200 no-underline text-slate-900 transition-all hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)]">
+        <div class="text-xl mb-2.5">📊</div>
+        <div class="text-[13px] font-bold mb-1">Riwayat laporan</div>
+        <div class="text-[11px] text-slate-500">Lihat laporan sebelumnya</div>
     </a>
 </div>
 
-<div class="card">
-    <div class="card-header">
-        <div class="card-title">Transaksi Terakhir</div>
-        <a href="{{ route('kasir.riwayat') }}" class="card-link">Lihat Semua →</a>
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div class="py-3.5 px-4.5 border-b border-slate-200 flex items-center justify-between">
+        <div class="font-bold text-[13px] text-slate-900">Transaksi terakhir</div>
+        <a href="{{ route('kasir.riwayat') }}" class="text-[11px] text-blue-600 no-underline">Lihat semua →</a>
     </div>
-    <table>
+    <table class="w-full border-collapse">
         <thead>
         <tr>
-            <th>No</th>
-            <th>Waktu</th>
-            <th>Total</th>
-            <th>Status</th>
+            <th class="py-2.5 px-3.5 text-xs border-b border-slate-100 bg-slate-50 uppercase text-[10px] text-slate-500 text-left">No</th>
+            <th class="py-2.5 px-3.5 text-xs border-b border-slate-100 bg-slate-50 uppercase text-[10px] text-slate-500 text-left">Waktu</th>
+            <th class="py-2.5 px-3.5 text-xs border-b border-slate-100 bg-slate-50 uppercase text-[10px] text-slate-500 text-left">Total</th>
+            <th class="py-2.5 px-3.5 text-xs border-b border-slate-100 bg-slate-50 uppercase text-[10px] text-slate-500 text-left">Status</th>
         </tr>
         </thead>
         <tbody>
         @forelse($transaksiTerakhir as $t)
         <tr>
-            <td>#{{ str_pad($t->id,4,'0',STR_PAD_LEFT) }}</td>
-            <td>{{ \Carbon\Carbon::parse($t->tanggal_transaksi)->format('H:i') }}</td>
-            <td>Rp {{ number_format($t->total_pembayaran,0,',','.') }}</td>
-            <td>
+            <td class="py-2.5 px-3.5 text-xs border-b border-slate-100 text-slate-900">#{{ str_pad($t->id,4,'0',STR_PAD_LEFT) }}</td>
+            <td class="py-2.5 px-3.5 text-xs border-b border-slate-100 text-slate-900">{{ \Carbon\Carbon::parse($t->tanggal_transaksi)->format('H:i') }}</td>
+            <td class="py-2.5 px-3.5 text-xs border-b border-slate-100 text-slate-900">Rp {{ number_format($t->total_pembayaran,0,',','.') }}</td>
+            <td class="py-2.5 px-3.5 text-xs border-b border-slate-100">
                 @if($t->status === 'dibayar')
-                    <span class="badge badge-success">Dibayar</span>
+                    <span class="py-0.5 px-2 rounded-full text-[10px] font-bold bg-green-100 text-green-700">Dibayar</span>
                 @elseif($t->status === 'pending')
-                    <span class="badge badge-warning">Pending</span>
+                    <span class="py-0.5 px-2 rounded-full text-[10px] font-bold bg-yellow-100 text-yellow-700">Pending</span>
                 @else
-                    <span class="badge badge-danger">{{ ucfirst($t->status) }}</span>
+                    <span class="py-0.5 px-2 rounded-full text-[10px] font-bold bg-red-100 text-red-700">{{ ucfirst($t->status) }}</span>
                 @endif
             </td>
         </tr>
         @empty
         <tr>
-            <td colspan="4" class="empty-state">Belum ada transaksi hari ini</td>
+            <td colspan="4" class="text-center py-7.5 text-slate-400">Belum ada transaksi hari ini</td>
         </tr>
         @endforelse
         </tbody>

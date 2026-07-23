@@ -1,334 +1,119 @@
 @extends('layouts.app')
 
+@section('title', 'Manajemen Kategori')
 @section('page_title', 'Manajemen Kategori')
-@section('page_sub', 'Kelola kategori produk Anda')
-
-@section('styles')
-.page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: var(--accent);
-    color: #fff;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 9px 16px;
-    border-radius: 9px;
-    text-decoration: none;
-    transition: all 0.15s;
-    box-shadow: 0 2px 8px rgba(37,99,235,0.25);
-}
-
-.btn-primary:hover {
-    background: #1d4ed8;
-    box-shadow: 0 4px 12px rgba(37,99,235,0.35);
-    transform: translateY(-1px);
-}
-
-/* ===== CARD ===== */
-.card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-/* ===== TABLE ===== */
-.table-wrapper { overflow-x: auto; }
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-}
-
-thead th {
-    background: var(--bg3);
-    border-bottom: 1px solid var(--border);
-    padding: 11px 16px;
-    text-align: left;
-    font-size: 10.5px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    color: var(--text3);
-}
-
-thead th.center { text-align: center; }
-
-tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.12s;
-}
-
-tbody tr:last-child { border-bottom: none; }
-tbody tr:hover { background: var(--bg3); }
-
-tbody td {
-    padding: 13px 16px;
-    color: var(--text);
-    vertical-align: middle;
-}
-
-tbody td.center { text-align: center; }
-
-/* ===== CATEGORY ICON ===== */
-.cat-cell {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-}
-
-.cat-icon {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    background: var(--accent-light);
-    border: 1px solid rgba(37,99,235,0.12);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    flex-shrink: 0;
-}
-
-.cat-name {
-    font-weight: 600;
-    font-size: 13px;
-    color: var(--text);
-}
-
-/* ===== BADGE ===== */
-.badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    border-radius: 99px;
-    font-size: 11px;
-    font-weight: 600;
-}
-
-.badge-blue {
-    background: #eff6ff;
-    color: var(--accent);
-    border: 1px solid #bfdbfe;
-}
-
-/* ===== ACTION BUTTONS ===== */
-.action-group {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-
-.btn-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    border: none;
-    transition: all 0.15s;
-    font-family: inherit;
-}
-
-.btn-edit {
-    background: var(--accent-light);
-    color: var(--accent);
-    border: 1px solid #bfdbfe;
-}
-
-.btn-edit:hover {
-    background: #dbeafe;
-    color: #1d4ed8;
-}
-
-.btn-delete {
-    background: var(--danger-light);
-    color: var(--danger);
-    border: 1px solid #fecaca;
-}
-
-.btn-delete:hover {
-    background: #fee2e2;
-    color: #b91c1c;
-}
-
-/* ===== EMPTY STATE ===== */
-.empty-state {
-    padding: 48px 24px;
-    text-align: center;
-}
-
-.empty-icon {
-    width: 56px; height: 56px;
-    border-radius: 14px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    margin: 0 auto 14px;
-}
-
-.empty-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 4px;
-}
-
-.empty-sub {
-    font-size: 12px;
-    color: var(--text3);
-    margin-bottom: 16px;
-}
-
-/* ===== SUMMARY STATS ===== */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 14px;
-}
-
-.stat-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 18px;
-    box-shadow: var(--shadow);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.stat-icon {
-    width: 42px; height: 42px;
-    border-radius: 11px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-}
-
-.stat-icon-green { background: var(--success-light); border: 1px solid #bbf7d0; }
-.stat-icon-blue  { background: var(--accent-light);  border: 1px solid #bfdbfe; }
-
-.stat-label { font-size: 11px; font-weight: 600; color: var(--text3); margin-bottom: 3px; }
-.stat-value { font-size: 22px; font-weight: 800; color: var(--text); line-height: 1; }
-@endsection
+@section('page_sub', 'Kelola kategori produk')
 
 @section('content')
 
-{{-- Page Header --}}
-<div class="page-header">
+{{-- Header --}}
+<div class="flex items-center justify-between mb-5">
     <div>
-        {{-- breadcrumb / judul sudah di header layout --}}
+        <h2 class="text-xl font-extrabold text-slate-900">🏷️ Manajemen Kategori</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Kelola kategori produk yang tersedia di sistem</p>
     </div>
-    <a href="/admin/kategori/create" class="btn-primary">
-        ＋ Tambah Kategori
+    <a href="/admin/kategori/create" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[9px] text-xs font-semibold no-underline bg-blue-600 text-white shadow-[0_3px_10px_rgba(37,99,235,0.25)] hover:bg-blue-700 hover:-translate-y-px transition-all">
+        ➕ Tambah kategori
     </a>
 </div>
 
-{{-- Table Card --}}
-<div class="card">
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th style="width:52px">No</th>
-                    <th>Nama Kategori</th>
-                    <th class="center" style="width:160px">Jumlah Produk</th>
-                    <th class="center" style="width:160px">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($kategori as $k)
-                <tr>
-                    <td>
-                        <span style="font-size:12px;color:var(--text3);font-weight:600">{{ $loop->iteration }}</span>
-                    </td>
-                    <td>
-                        <div class="cat-cell">
-                            <div class="cat-icon">🏷️</div>
-                            <div class="cat-name">{{ $k->nama }}</div>
-                        </div>
-                    </td>
-                    <td class="center">
-                        <span class="badge badge-blue">
-                            📦 {{ $k->produk_count }} produk
-                        </span>
-                    </td>
-                    <td>
-                        <div class="action-group">
-                            <a href="/admin/kategori/{{ $k->id }}/edit" class="btn-action btn-edit">
-                                ✏️ Edit
-                            </a>
-                            <form action="/admin/kategori/{{ $k->id }}" method="POST" style="display:inline">
+{{-- Summary --}}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-5">
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
+        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-blue-50">🏷️</div>
+        <div>
+            <div class="text-[11px] text-slate-500 font-semibold mb-1 uppercase">Total kategori</div>
+            <div class="text-xl font-extrabold leading-none text-blue-600">{{ $kategori->count() }}</div>
+        </div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
+        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-green-50">📦</div>
+        <div>
+            <div class="text-[11px] text-slate-500 font-semibold mb-1 uppercase">Total produk terdaftar</div>
+            <div class="text-xl font-extrabold leading-none text-green-600">{{ $kategori->sum('produk_count') }}</div>
+        </div>
+    </div>
+</div>
+
+{{-- Toolbar --}}
+<div class="flex items-center gap-2.5 mb-3.5">
+    <div class="relative flex-1 max-w-[300px]">
+        <span class="absolute left-[11px] top-1/2 -translate-y-1/2 text-[13px] pointer-events-none">🔍</span>
+        <input type="text" id="searchInput" placeholder="Cari kategori..." oninput="filterTable()"
+               class="w-full py-2.5 pl-9 pr-3.5 bg-white border border-slate-200 rounded-[9px] text-xs text-slate-900 outline-none shadow-sm focus:border-blue-600 transition-colors">
+    </div>
+</div>
+
+{{-- Table --}}
+<div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <table id="kategoriTable" class="w-full border-collapse">
+        <thead class="bg-slate-50">
+            <tr>
+                <th class="py-2.5 px-4 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wide border-b border-slate-200">#</th>
+                <th class="py-2.5 px-4 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wide border-b border-slate-200">Nama kategori</th>
+                <th class="py-2.5 px-4 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wide border-b border-slate-200">Jumlah produk</th>
+                <th class="py-2.5 px-4 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wide border-b border-slate-200">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($kategori as $i => $k)
+            <tr class="hover:bg-slate-50">
+                <td class="py-3 px-4 text-[13px] border-b border-slate-200 align-middle font-semibold text-slate-400">{{ $i + 1 }}</td>
+                <td class="py-3 px-4 text-[13px] border-b border-slate-200 align-middle font-bold text-slate-900">{{ $k->nama }}</td>
+                <td class="py-3 px-4 text-[13px] border-b border-slate-200 align-middle">
+                    @if($k->produk_count > 0)
+                        <span class="inline-flex items-center py-0.5 px-2.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-600">{{ $k->produk_count }} produk</span>
+                    @else
+                        <span class="inline-flex items-center py-0.5 px-2.5 rounded-full text-[11px] font-bold bg-slate-50 text-slate-500 border border-slate-200">Kosong</span>
+                    @endif
+                </td>
+                <td class="py-3 px-4 text-[13px] border-b border-slate-200 align-middle">
+                    <div class="flex gap-1.5">
+                        <a href="/admin/kategori/{{ $k->id }}/edit"
+                           class="inline-flex items-center gap-1 py-1.5 px-3 rounded-lg text-[11px] font-semibold no-underline bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors">✏️ Edit</a>
+
+                        @if($k->produk_count == 0)
+                            <form action="/admin/kategori/{{ $k->id }}" method="POST" class="inline"
+                                  onsubmit="return confirm('Hapus kategori \'{{ $k->nama }}\'?')">
                                 @csrf
                                 @method('DELETE')
-                                <button
-                                    type="submit"
-                                    class="btn-action btn-delete"
-                                    onclick="return confirm('Yakin ingin menghapus kategori ini?')"
-                                >
-                                    🗑️ Hapus
-                                </button>
+                                <button type="submit" class="inline-flex items-center gap-1 py-1.5 px-3 rounded-lg text-[11px] font-semibold cursor-pointer bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors">🗑 Hapus</button>
                             </form>
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="4">
-                        <div class="empty-state">
-                            <div class="empty-icon">🏷️</div>
-                            <div class="empty-title">Belum ada kategori</div>
-                            <div class="empty-sub">Mulai dengan menambahkan kategori pertama Anda</div>
-                            <a href="/admin/kategori/create" class="btn-primary" style="display:inline-flex">
-                                ＋ Tambah Kategori
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+                        @else
+                            <span class="inline-flex items-center gap-1 py-1.5 px-3 rounded-lg text-[11px] font-semibold bg-slate-50 text-slate-400 cursor-not-allowed"
+                                  title="Tidak bisa dihapus — masih ada {{ $k->produk_count }} produk">
+                                🔒 Terkunci
+                            </span>
+                        @endif
+                    </div>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="4">
+                    <div class="text-center py-[50px] px-5 text-slate-500">
+                        <div class="text-[40px] mb-3">🏷️</div>
+                        <p class="text-[13px]">Belum ada kategori. <a href="/admin/kategori/create" class="text-blue-600 font-semibold">Tambah sekarang</a></p>
+                    </div>
+                </td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+    <div class="py-2.5 px-4 border-t border-slate-200 text-[11px] text-slate-500 bg-slate-50">
+        Total <strong>{{ $kategori->count() }}</strong> kategori
     </div>
 </div>
 
-{{-- Summary Stats --}}
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-icon stat-icon-green">🏷️</div>
-        <div>
-            <div class="stat-label">Total Kategori</div>
-            <div class="stat-value">{{ $kategori->count() }}</div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon stat-icon-blue">📦</div>
-        <div>
-            <div class="stat-label">Total Produk</div>
-            <div class="stat-value">{{ $kategori->sum('produk_count') }}</div>
-        </div>
-    </div>
-</div>
+@endsection
 
+@section('scripts')
+<script>
+function filterTable() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('#kategoriTable tbody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+</script>
 @endsection

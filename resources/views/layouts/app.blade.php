@@ -5,281 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POS QRIS — @yield('title', 'Dashboard')</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        :root {
-            --bg:           #f0f4f8;
-            --bg2:          #ffffff;
-            --bg3:          #f8fafc;
-            --border:       #e2e8f0;
-            --border2:      #cbd5e1;
-            --accent:       #2563eb;
-            --accent-light: #eff6ff;
-            --accent2:      #7c3aed;
-            --success:      #16a34a;
-            --success-light:#f0fdf4;
-            --warning:      #d97706;
-            --warning-light:#fffbeb;
-            --danger:       #dc2626;
-            --danger-light: #fef2f2;
-            --text:         #0f172a;
-            --text2:        #64748b;
-            --text3:        #94a3b8;
-            --sidebar-w:    230px;
-            --header-h:     62px;
-            --shadow:       0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
-            --shadow-md:    0 4px 14px rgba(0,0,0,0.08);
-            --radius:       12px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-        }
-
-        /* ===== SIDEBAR ===== */
-        .sidebar {
-            width: var(--sidebar-w);
-            background: var(--bg2);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: 0; left: 0; bottom: 0;
-            z-index: 100;
-            box-shadow: var(--shadow);
-        }
-
-        .sidebar-logo {
-            padding: 18px 16px 14px;
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; gap: 10px;
-        }
-
-        .logo-icon {
-            width: 36px; height: 36px;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 17px;
-            box-shadow: 0 3px 8px rgba(37,99,235,0.28);
-            flex-shrink: 0;
-        }
-
-        .logo-text { font-weight: 800; font-size: 15px; letter-spacing: -0.3px; color: var(--text); }
-        .logo-sub  { font-size: 10px; color: var(--text3); font-weight: 500; }
-
-        .sidebar-section { padding: 12px 10px 4px; }
-
-        .sidebar-label {
-            font-size: 9.5px; font-weight: 700; letter-spacing: 1.2px;
-            color: var(--text3); text-transform: uppercase;
-            padding: 0 8px; margin-bottom: 4px;
-        }
-
-        .nav-item {
-            display: flex; align-items: center; gap: 9px;
-            padding: 9px 10px;
-            border-radius: 9px;
-            cursor: pointer;
-            font-size: 13px; font-weight: 500;
-            color: var(--text2);
-            transition: all 0.15s;
-            text-decoration: none;
-            margin-bottom: 1px;
-        }
-
-        .nav-item:hover  { background: var(--bg3); color: var(--text); }
-        .nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
-
-        .nav-icon {
-            width: 30px; height: 30px;
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; flex-shrink: 0;
-        }
-
-        .nav-item.active .nav-icon { background: rgba(37,99,235,0.1); }
-
-        .nav-badge {
-            margin-left: auto;
-            background: var(--danger);
-            color: #fff; font-size: 9px; font-weight: 700;
-            padding: 2px 6px; border-radius: 99px;
-        }
-
-        .sidebar-bottom {
-            margin-top: auto;
-            padding: 12px;
-            border-top: 1px solid var(--border);
-        }
-
-        .user-card {
-            display: flex; align-items: center; gap: 9px;
-            padding: 9px 10px;
-            border-radius: 10px;
-            background: var(--bg3);
-            border: 1px solid var(--border);
-        }
-
-        .user-avatar {
-            width: 32px; height: 32px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #f59e0b, #ef4444);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px; font-weight: 800; color: white; flex-shrink: 0;
-        }
-
-        .user-name { font-size: 12px; font-weight: 700; color: var(--text); }
-        .user-role { font-size: 10px; color: var(--text3); }
-
-        /* ===== MAIN ===== */
-        .main {
-            margin-left: var(--sidebar-w);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            height: var(--header-h);
-            background: var(--bg2);
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center;
-            padding: 0 24px; gap: 12px;
-            position: sticky; top: 0; z-index: 50;
-            box-shadow: var(--shadow);
-        }
-
-        .header-title { font-size: 15px; font-weight: 800; color: var(--text); }
-        .header-sub   { font-size: 11px; color: var(--text3); margin-top: 1px; }
-        .header-spacer { flex: 1; }
-
-        .header-btn {
-            width: 36px; height: 36px;
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 14px; color: var(--text2);
-            transition: all 0.15s;
-            text-decoration: none;
-        }
-
-        .header-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-
-        /* ===== PAGE CONTENT ===== */
-        .page-content { padding: 24px; flex: 1; }
-
-        /* ===== FLASH MESSAGES ===== */
-        .flash {
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-size: 13px; font-weight: 500;
-            margin-bottom: 16px;
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        .flash-success { background: var(--success-light); border: 1px solid #bbf7d0; color: var(--success); }
-        .flash-error   { background: var(--danger-light);  border: 1px solid #fecaca; color: var(--danger); }
-
-        /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
-
-        @yield('styles')
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 
+    @yield('styles')
     @yield('head')
 </head>
-<body>
+<body class="font-sans bg-slate-100 text-slate-900 min-h-screen flex m-0 p-0">
 
 @if(session('user_id'))
-<aside class="sidebar">
-    <div class="sidebar-logo">
-        <div class="logo-icon">🛒</div>
+<aside class="w-[230px] bg-white border-r border-slate-200 flex flex-col fixed top-0 left-0 bottom-0 z-[100] shadow-sm">
+    <div class="px-4 pt-[18px] pb-3.5 border-b border-slate-200 flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-[10px] bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center text-[17px] shadow-md shadow-blue-600/30 shrink-0">🛒</div>
         <div>
-            <div class="logo-text">POS QRIS</div>
-            <div class="logo-sub">{{ session('user_role') === 'admin' ? 'Administrator' : 'Kasir' }}</div>
+            <div class="font-extrabold text-[15px] tracking-tight text-slate-900">POS QRIS</div>
+            <div class="text-[10px] text-slate-400 font-medium">{{ session('user_role') === 'admin' ? 'Administrator' : 'Kasir' }}</div>
         </div>
     </div>
 
     @if(session('user_role') === 'kasir')
-    <div class="sidebar-section">
-        <div class="sidebar-label">Menu</div>
-        <a href="/kasir/dashboard" class="nav-item {{ request()->is('kasir/dashboard') ? 'active' : '' }}">
-            <div class="nav-icon">🏠</div> Dashboard
+    <div class="px-2.5 pt-3 pb-1">
+        <div class="text-[9.5px] font-bold tracking-[1.2px] text-slate-400 uppercase px-2 mb-1">Menu</div>
+        <a href="/kasir/dashboard" class="flex items-center gap-2.5 px-2.5 py-2.5 rounded-[9px] text-[13px] font-medium no-underline mb-0.5 transition-colors {{ request()->is('kasir/dashboard') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
+            <div class="w-[30px] h-[30px] rounded-lg flex items-center justify-center text-sm shrink-0 {{ request()->is('kasir/dashboard') ? 'bg-blue-600/10' : '' }}">🏠</div> Dashboard
         </a>
-        <a href="/kasir/transaksi" class="nav-item {{ request()->is('kasir/transaksi*') ? 'active' : '' }}">
-            <div class="nav-icon">🏪</div> Kasir / POS
+        <a href="/kasir/transaksi" class="flex items-center gap-2.5 px-2.5 py-2.5 rounded-[9px] text-[13px] font-medium no-underline mb-0.5 transition-colors {{ request()->is('kasir/transaksi*') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
+            <div class="w-[30px] h-[30px] rounded-lg flex items-center justify-center text-sm shrink-0 {{ request()->is('kasir/transaksi*') ? 'bg-blue-600/10' : '' }}">🏪</div> Kasir / POS
         </a>
     </div>
     @endif
 
     @if(session('user_role') === 'admin')
-    <div class="sidebar-section">
-        <div class="sidebar-label">Menu Utama</div>
-        <a href="/admin/dashboard" class="nav-item {{ request()->is('admin/dashboard') ? 'active' : '' }}">
-            <div class="nav-icon">🏠</div> Dashboard
+    <div class="px-2.5 pt-3 pb-1">
+        <div class="text-[9.5px] font-bold tracking-[1.2px] text-slate-400 uppercase px-2 mb-1">Menu utama</div>
+        <a href="/admin/dashboard" class="flex items-center gap-2.5 px-2.5 py-2.5 rounded-[9px] text-[13px] font-medium no-underline mb-0.5 transition-colors {{ request()->is('admin/dashboard') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
+            <div class="w-[30px] h-[30px] rounded-lg flex items-center justify-center text-sm shrink-0 {{ request()->is('admin/dashboard') ? 'bg-blue-600/10' : '' }}">🏠</div> Dashboard
         </a>
-        <a href="/admin/produk" class="nav-item {{ request()->is('admin/produk*') ? 'active' : '' }}">
-            <div class="nav-icon">📦</div> Barang & Stok
+        <a href="/admin/produk" class="flex items-center gap-2.5 px-2.5 py-2.5 rounded-[9px] text-[13px] font-medium no-underline mb-0.5 transition-colors {{ request()->is('admin/produk*') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
+            <div class="w-[30px] h-[30px] rounded-lg flex items-center justify-center text-sm shrink-0 {{ request()->is('admin/produk*') ? 'bg-blue-600/10' : '' }}">📦</div> Barang & Stok
         </a>
-        <a href="/admin/kategori" class="nav-item {{ request()->is('admin/kategori*') ? 'active' : '' }}">
-            <div class="nav-icon">🏷️</div> Kategori
+        <a href="/admin/kategori" class="flex items-center gap-2.5 px-2.5 py-2.5 rounded-[9px] text-[13px] font-medium no-underline mb-0.5 transition-colors {{ request()->is('admin/kategori*') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
+            <div class="w-[30px] h-[30px] rounded-lg flex items-center justify-center text-sm shrink-0 {{ request()->is('admin/kategori*') ? 'bg-blue-600/10' : '' }}">🏷️</div> Kategori
         </a>
-        <a href="/admin/laporan" class="nav-item {{ request()->is('admin/laporan*') ? 'active' : '' }}">
-            <div class="nav-icon">📊</div> Laporan
+        <a href="/admin/laporan" class="flex items-center gap-2.5 px-2.5 py-2.5 rounded-[9px] text-[13px] font-medium no-underline mb-0.5 transition-colors {{ request()->is('admin/laporan*') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
+            <div class="w-[30px] h-[30px] rounded-lg flex items-center justify-center text-sm shrink-0 {{ request()->is('admin/laporan*') ? 'bg-blue-600/10' : '' }}">📊</div> Laporan
         </a>
     </div>
-    <div class="sidebar-section">
-        <div class="sidebar-label">Pengaturan</div>
-        <a href="/admin/pengguna" class="nav-item {{ request()->is('admin/pengguna*') ? 'active' : '' }}">
-            <div class="nav-icon">👥</div> Pengguna
+    <div class="px-2.5 pt-3 pb-1">
+        <div class="text-[9.5px] font-bold tracking-[1.2px] text-slate-400 uppercase px-2 mb-1">Pengaturan</div>
+        <a href="/admin/pengguna" class="flex items-center gap-2.5 px-2.5 py-2.5 rounded-[9px] text-[13px] font-medium no-underline mb-0.5 transition-colors {{ request()->is('admin/pengguna*') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
+            <div class="w-[30px] h-[30px] rounded-lg flex items-center justify-center text-sm shrink-0 {{ request()->is('admin/pengguna*') ? 'bg-blue-600/10' : '' }}">👥</div> Pengguna
         </a>
     </div>
     @endif
 
-    <div class="sidebar-bottom">
-        <div class="user-card">
-            <div class="user-avatar">{{ strtoupper(substr(session('user_name', 'U'), 0, 2)) }}</div>
+    <div class="mt-auto p-3 border-t border-slate-200">
+        <div class="flex items-center gap-2.5 px-2.5 py-2.5 rounded-[10px] bg-slate-50 border border-slate-200">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-red-500 flex items-center justify-center text-xs font-extrabold text-white shrink-0">{{ strtoupper(substr(session('user_name', 'U'), 0, 2)) }}</div>
             <div>
-                <div class="user-name">{{ session('user_name', 'Pengguna') }}</div>
-                <div class="user-role">{{ ucfirst(session('user_role', '')) }}</div>
+                <div class="text-xs font-bold text-slate-900">{{ session('user_name', 'Pengguna') }}</div>
+                <div class="text-[10px] text-slate-400">{{ ucfirst(session('user_role', '')) }}</div>
             </div>
         </div>
     </div>
 </aside>
 @endif
 
-<div class="main" style="{{ !session('user_id') ? 'margin-left:0' : '' }}">
+<div class="flex-1 flex flex-col min-h-screen {{ session('user_id') ? 'ml-[230px]' : '' }}">
 
     @if(session('user_id'))
-    <header class="header">
+    <header class="h-[62px] bg-white border-b border-slate-200 flex items-center px-6 gap-3 sticky top-0 z-50 shadow-sm">
         <div>
-            <div class="header-title">@yield('page_title', 'Dashboard')</div>
-            <div class="header-sub">@yield('page_sub', 'POS QRIS System')</div>
+            <div class="text-[15px] font-extrabold text-slate-900">@yield('page_title', 'Dashboard')</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">@yield('page_sub', 'POS QRIS System')</div>
         </div>
-        <div class="header-spacer"></div>
-        <a href="/logout" class="header-btn" title="Logout">🚪</a>
+        <div class="flex-1"></div>
+        <a href="/logout" class="w-9 h-9 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center text-sm text-slate-500 hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50 transition-colors no-underline" title="Logout">🚪</a>
     </header>
     @endif
 
-    <div class="page-content">
+    <div class="p-6 flex-1">
         @if(session('success'))
-            <div class="flash flash-success">✅ {{ session('success') }}</div>
+            <div class="rounded-[10px] px-4 py-3 text-[13px] font-medium mb-4 flex items-center gap-2 bg-green-50 border border-green-200 text-green-600">✅ {{ session('success') }}</div>
         @endif
         @if(session('error'))
-            <div class="flash flash-error">❌ {{ session('error') }}</div>
+            <div class="rounded-[10px] px-4 py-3 text-[13px] font-medium mb-4 flex items-center gap-2 bg-red-50 border border-red-200 text-red-600">❌ {{ session('error') }}</div>
         @endif
 
         @yield('content')

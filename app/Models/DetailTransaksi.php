@@ -27,6 +27,9 @@ class DetailTransaksi extends Model
 
     public function produk(): BelongsTo
     {
-        return $this->belongsTo(Produk::class, 'produk_id');
+        // withTrashed() PENTING: produk di detail transaksi historis harus
+        // tetap bisa ditampilkan (nama, harga) walau produknya sudah
+        // dinonaktifkan/soft-delete di kemudian hari.
+        return $this->belongsTo(Produk::class, 'produk_id')->withTrashed();
     }
 }

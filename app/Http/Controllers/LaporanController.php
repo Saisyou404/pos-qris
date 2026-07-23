@@ -21,25 +21,27 @@ class LaporanController extends Controller
         $start = Carbon::parse($startDate)->startOfDay();
         $end = Carbon::parse($endDate)->endOfDay();
 
-        // Total transaksi
-        $totalTransaksi = Transaksi::whereBetween('tanggal_transaksi', [$start, $end])->count();
+        // Total transaksi (hanya yang berhasil dibayar)
+        $totalTransaksi = Transaksi::whereBetween('tanggal_transaksi', [$start, $end])
+            ->where('status', 'dibayar')
+            ->count();
 
         // Total pendapatan
         $totalPendapatan = Transaksi::whereBetween('tanggal_transaksi', [$start, $end])
-            ->where('status', 'success')
+            ->where('status', 'dibayar')
             ->sum('total_pembayaran');
 
         // Total produk terjual
         $totalProdukTerjual = DetailTransaksi::whereHas('transaksi', function($query) use ($start, $end) {
             $query->whereBetween('tanggal_transaksi', [$start, $end])
-                  ->where('status', 'success');
+                  ->where('status', 'dibayar');
         })->sum('jumlah');
 
         // Top 5 produk terlaris
         $topProduk = DetailTransaksi::select('produk_id', DB::raw('SUM(jumlah) as total_terjual'), DB::raw('SUM(subtotal) as total_pendapatan'))
             ->whereHas('transaksi', function($query) use ($start, $end) {
                 $query->whereBetween('tanggal_transaksi', [$start, $end])
-                      ->where('status', 'success');
+                      ->where('status', 'dibayar');
             })
             ->groupBy('produk_id')
             ->orderBy('total_terjual', 'desc')
@@ -55,7 +57,7 @@ class LaporanController extends Controller
 
         // Data grafik penjualan (7 hari terakhir)
         $grafikData = Transaksi::selectRaw('DATE(tanggal_transaksi) as tanggal, SUM(total_pembayaran) as total')
-            ->where('status', 'success')
+            ->where('status', 'dibayar')
             ->whereBetween('tanggal_transaksi', [Carbon::now()->subDays(6)->startOfDay(), Carbon::now()->endOfDay()])
             ->groupBy('tanggal')
             ->orderBy('tanggal')

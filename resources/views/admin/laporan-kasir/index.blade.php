@@ -1,39 +1,68 @@
 @extends('layouts.app')
 
-@section('title', 'Riwayat Laporan')
-@section('page_title', 'Riwayat Laporan')
-@section('page_sub', 'Arsip laporan harian Anda')
+@section('title', 'Laporan Kasir')
+@section('page_title', 'Laporan Kasir')
+@section('page_sub', 'Laporan harian yang disubmit oleh kasir')
 
 @section('content')
 
-{{-- Toolbar --}}
-<form method="GET" action="{{ route('kasir.laporan.riwayat') }}">
-<div class="flex items-end gap-3 flex-wrap mb-4.5">
+{{-- Tab Navigasi --}}
+<div class="flex gap-2 mb-4.5">
+    <a href="{{ route('admin.laporan') }}" class="inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold no-underline bg-white text-slate-500 border border-slate-200 hover:border-blue-600 hover:text-blue-600 transition-colors">📊 Transaksi</a>
+    <a href="{{ route('admin.laporan.kasir') }}" class="inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold no-underline bg-blue-600 text-white shadow-[0_2px_8px_rgba(37,99,235,0.25)]">📋 Laporan kasir</a>
+</div>
+
+{{-- Filter --}}
+<form method="GET" action="{{ route('admin.laporan.kasir') }}">
+<div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 mb-4.5 flex items-end gap-3 flex-wrap shadow-sm">
     <div class="flex flex-col gap-1.5">
-        <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wide">Bulan</span>
-        <select name="bulan" class="py-2 px-3 bg-white border border-slate-200 rounded-lg text-[12.5px] text-slate-900 outline-none shadow-sm focus:border-blue-600 transition-colors">
-            @foreach(range(1, 12) as $m)
-            <option value="{{ $m }}" {{ $bulan == $m ? 'selected' : '' }}>
-                {{ \Carbon\Carbon::create()->month($m)->isoFormat('MMMM') }}
-            </option>
+        <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wide">Kasir</span>
+        <select name="kasir_id" class="py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-[12.5px] text-slate-900 outline-none focus:border-blue-600 transition-colors min-w-[160px]">
+            <option value="all" {{ $kasirId === 'all' ? 'selected' : '' }}>Semua kasir</option>
+            @foreach($kasirs as $k)
+                <option value="{{ $k->id }}" {{ (string) $kasirId === (string) $k->id ? 'selected' : '' }}>{{ $k->nama }}</option>
             @endforeach
         </select>
     </div>
     <div class="flex flex-col gap-1.5">
-        <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wide">Tahun</span>
-        <select name="tahun" class="py-2 px-3 bg-white border border-slate-200 rounded-lg text-[12.5px] text-slate-900 outline-none shadow-sm focus:border-blue-600 transition-colors">
-            @foreach(range(now()->year, now()->year - 2) as $y)
-            <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
-            @endforeach
-        </select>
+        <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wide">Tanggal mulai</span>
+        <input type="date" name="start_date" value="{{ $startDate }}"
+               class="py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-[12.5px] text-slate-900 outline-none focus:border-blue-600 transition-colors">
+    </div>
+    <div class="flex flex-col gap-1.5">
+        <span class="text-[10.5px] font-bold text-slate-400 uppercase tracking-wide">Tanggal akhir</span>
+        <input type="date" name="end_date" value="{{ $endDate }}"
+               class="py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-[12.5px] text-slate-900 outline-none focus:border-blue-600 transition-colors">
     </div>
     <button type="submit" class="self-end inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold cursor-pointer bg-blue-600 text-white shadow-[0_2px_8px_rgba(37,99,235,0.25)] hover:bg-blue-700 transition-colors">🔍 Filter</button>
-    <a href="{{ route('kasir.laporan.riwayat') }}" class="self-end inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold no-underline bg-white text-slate-500 border border-slate-200 hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">↺ Reset</a>
-    <a href="{{ route('kasir.laporan.input') }}" class="ml-auto self-end inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold no-underline bg-gradient-to-br from-blue-600 to-violet-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.3)] hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(37,99,235,0.4)] transition-all">
-        ＋ Input laporan hari ini
-    </a>
+    <a href="{{ route('admin.laporan.kasir') }}" class="self-end inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold no-underline bg-slate-50 text-slate-500 border border-slate-200 hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">↺ Reset</a>
 </div>
 </form>
+
+{{-- Summary --}}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 mb-4.5">
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
+        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-blue-50">📋</div>
+        <div>
+            <div class="text-[11px] text-slate-500 font-semibold mb-1">Total laporan</div>
+            <div class="text-xl font-extrabold leading-none text-blue-600">{{ $totalLaporan }}</div>
+        </div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
+        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-green-50">💰</div>
+        <div>
+            <div class="text-[11px] text-slate-500 font-semibold mb-1">Total pendapatan (sesuai laporan)</div>
+            <div class="text-xl font-extrabold leading-none text-green-600">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</div>
+        </div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-3.5">
+        <div class="w-[42px] h-[42px] rounded-[11px] flex items-center justify-center text-xl shrink-0 bg-red-50">⚠️</div>
+        <div>
+            <div class="text-[11px] text-slate-500 font-semibold mb-1">Laporan dengan kendala</div>
+            <div class="text-xl font-extrabold leading-none text-red-600">{{ $adaKendala }}</div>
+        </div>
+    </div>
+</div>
 
 {{-- Grid Laporan --}}
 @if($laporan->count() > 0)
@@ -53,7 +82,7 @@
         <div class="py-4 px-4.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
             <div>
                 <div class="text-[13px] font-extrabold text-slate-900">{{ \Carbon\Carbon::parse($l->tanggal)->format('d M Y') }}</div>
-                <div class="text-[11px] text-slate-400 mt-0.5">{{ $hari }}</div>
+                <div class="text-[11px] text-slate-400 mt-0.5">{{ $hari }} &middot; {{ $l->pengguna->nama ?? 'Kasir dihapus' }}</div>
             </div>
             <span class="inline-flex items-center gap-1 py-1 px-2.5 rounded-full text-[10.5px] font-bold {{ $badgeClass }}">
                 {{ $kondisiIcon }} {{ ucfirst($l->kondisi_toko) }}
@@ -72,21 +101,8 @@
                 </div>
             </div>
 
-            <div class="flex gap-2 mb-3">
-                <div class="flex-1 bg-slate-50 border border-slate-200 rounded-lg py-2 px-2.5 text-center">
-                    <div class="text-base mb-0.5">💵</div>
-                    <div class="text-[9.5px] text-slate-400 font-semibold">Tunai</div>
-                    <div class="text-xs font-extrabold text-slate-900 mt-0.5">Rp {{ number_format($l->pendapatan_tunai, 0, ',', '.') }}</div>
-                </div>
-                <div class="flex-1 bg-slate-50 border border-slate-200 rounded-lg py-2 px-2.5 text-center">
-                    <div class="text-base mb-0.5">📱</div>
-                    <div class="text-[9.5px] text-slate-400 font-semibold">QRIS</div>
-                    <div class="text-xs font-extrabold text-slate-900 mt-0.5">Rp {{ number_format($l->pendapatan_qris, 0, ',', '.') }}</div>
-                </div>
-            </div>
-
             @if($l->catatan_kejadian)
-            <div class="bg-slate-50 border border-slate-200 rounded-[9px] py-2.5 px-3 text-[11.5px] text-slate-500 leading-relaxed">📌 {{ Str::limit($l->catatan_kejadian, 80) }}</div>
+            <div class="bg-red-50 border border-red-200 rounded-[9px] py-2.5 px-3 text-[11.5px] text-red-600 leading-relaxed">⚠️ {{ Str::limit($l->catatan_kejadian, 80) }}</div>
             @else
             <div class="bg-slate-50 border border-slate-200 rounded-[9px] py-2.5 px-3 text-[11.5px] text-slate-400 italic leading-relaxed">Tidak ada catatan kejadian</div>
             @endif
@@ -94,13 +110,12 @@
 
         <div class="py-2.5 px-4.5 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-[11px] text-slate-400">
             <span>⏰ {{ $l->jam_mulai }} – {{ $l->jam_selesai }}</span>
-            <span>Submit: {{ \Carbon\Carbon::parse($l->created_at)->format('H:i') }} WIB</span>
+            <span>Submit: {{ \Carbon\Carbon::parse($l->created_at)->format('d M, H:i') }}</span>
         </div>
     </div>
     @endforeach
 </div>
 
-{{-- Pagination --}}
 <div class="mt-4.5 flex justify-center">
     {{ $laporan->withQueryString()->links() }}
 </div>
@@ -109,18 +124,15 @@
 <div class="text-center py-[72px] px-5 text-slate-400">
     <div class="text-5xl mb-3 opacity-30">📋</div>
     <div class="text-[15px] font-bold text-slate-500 mb-1.5">Belum ada laporan</div>
-    <div class="text-xs mb-5">Tidak ada laporan pada periode yang dipilih</div>
-    <a href="{{ route('kasir.laporan.input') }}" class="inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold no-underline bg-gradient-to-br from-blue-600 to-violet-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.3)] hover:-translate-y-px transition-all">
-        ＋ Buat laporan hari ini
-    </a>
+    <div class="text-xs">Tidak ada laporan kasir pada filter yang dipilih</div>
 </div>
 @endif
 
-{{-- Modal Detail Laporan --}}
+{{-- Modal Detail --}}
 <div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[1000] items-center justify-center" id="detailModal">
     <div class="bg-white border border-slate-200 rounded-[18px] w-[520px] max-w-[96vw] max-h-[90vh] overflow-y-auto shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
         <div class="py-5 px-6 pb-4 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-[1]">
-            <div class="text-[15px] font-extrabold text-slate-900">📋 Detail laporan</div>
+            <div class="text-[15px] font-extrabold text-slate-900">📋 Detail laporan kasir</div>
             <button onclick="closeModal()"
                     class="w-[30px] h-[30px] border border-slate-200 bg-slate-50 rounded-lg cursor-pointer text-sm text-slate-500 flex items-center justify-center hover:border-red-600 hover:text-red-600 hover:bg-red-50 transition-colors">✕</button>
         </div>
@@ -137,6 +149,7 @@
     const laporanData = {
         @foreach($laporan as $l)
         {{ $l->id }}: {
+            kasir           : `{{ addslashes($l->pengguna->nama ?? 'Kasir dihapus') }}`,
             tanggal         : "{{ \Carbon\Carbon::parse($l->tanggal)->isoFormat('dddd, D MMMM Y') }}",
             jam_mulai       : "{{ $l->jam_mulai }}",
             jam_selesai     : "{{ $l->jam_selesai }}",
@@ -147,7 +160,7 @@
             qris            : {{ $l->pendapatan_qris }},
             catatan         : `{{ addslashes($l->catatan_kejadian ?? '') }}`,
             saran           : `{{ addslashes($l->saran ?? '') }}`,
-            submit_at       : "{{ \Carbon\Carbon::parse($l->created_at)->format('H:i') }} WIB",
+            submit_at       : "{{ \Carbon\Carbon::parse($l->created_at)->format('d M Y, H:i') }} WIB",
         },
         @endforeach
     };
@@ -166,6 +179,10 @@
             <div class="text-[10px] font-bold uppercase tracking-wide text-slate-400 mb-2.5">Informasi shift</div>
             <div class="grid grid-cols-2 gap-2.5 mb-1">
                 <div class="bg-slate-50 border border-slate-200 rounded-[9px] py-2.5 px-3.5">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Kasir</div>
+                    <div class="text-[13px] font-bold text-slate-900">${l.kasir}</div>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-[9px] py-2.5 px-3.5">
                     <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Tanggal</div>
                     <div class="text-[13px] font-bold text-slate-900">${l.tanggal}</div>
                 </div>
@@ -176,10 +193,6 @@
                 <div class="bg-slate-50 border border-slate-200 rounded-[9px] py-2.5 px-3.5">
                     <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Kondisi toko</div>
                     <div class="text-[13px] font-bold text-slate-900">${kondisiMap[l.kondisi]}</div>
-                </div>
-                <div class="bg-slate-50 border border-slate-200 rounded-[9px] py-2.5 px-3.5">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Waktu submit</div>
-                    <div class="text-[13px] font-bold text-slate-900">${l.submit_at}</div>
                 </div>
             </div>
 
@@ -209,10 +222,12 @@
             </div>
 
             ${l.saran ? `
-            <div class="text-[10px] font-bold uppercase tracking-wide text-slate-400 mb-2.5 mt-4">Saran / masukan</div>
+            <div class="text-[10px] font-bold uppercase tracking-wide text-slate-400 mb-2.5 mt-4">Saran / masukan dari kasir</div>
             <div class="bg-blue-50 border border-blue-200 rounded-[9px] py-3 px-3.5 text-[12.5px] text-slate-900 leading-relaxed">
                 ${l.saran}
             </div>` : ''}
+
+            <div class="text-[10.5px] text-slate-400 mt-4">Disubmit: ${l.submit_at}</div>
 
             <div class="mt-4.5">
                 <button onclick="closeModal()" class="w-full py-3 bg-blue-600 text-white border-0 rounded-[9px] text-[13px] font-bold cursor-pointer hover:bg-blue-700 transition-colors">

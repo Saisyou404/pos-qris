@@ -1,78 +1,69 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="mb-6">
-    <a href="/admin/produk" class="text-blue-600 hover:text-blue-800 flex items-center">
-        ← Kembali ke Daftar Produk
-    </a>
-</div>
+@section('title', 'Edit Produk')
+@section('page_title', 'Edit Produk')
+@section('page_sub', 'Perbarui data produk')
 
-<div class="bg-white rounded-lg shadow-lg p-8 max-w-2xl">
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">Edit Produk</h1>
+@section('content')
+
+<a href="/admin/produk" class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-slate-500 no-underline mb-5 hover:text-blue-600 transition-colors">← Kembali ke daftar produk</a>
+
+<div class="bg-white border border-slate-200 rounded-2xl p-7 max-w-[600px] shadow-sm">
+    <h2 class="text-lg font-extrabold text-slate-900 mb-5">✏️ Edit produk</h2>
 
     <form action="/admin/produk/{{ $produk->id }}" method="POST">
         @csrf
         @method('PUT')
 
-        <div class="mb-5">
-            <label for="nama" class="block text-sm font-semibold text-gray-700 mb-2">Nama Produk *</label>
+        <div class="mb-4.5">
+            <label for="nama" class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Nama produk *</label>
             <input type="text" id="nama" name="nama" value="{{ old('nama', $produk->nama) }}" required
-                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('nama') border-red-500 @else border-gray-300 @enderror">
-            @error('nama')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
+                class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors @error('nama') border-red-600 @else border-slate-200 @enderror">
+            @error('nama') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror
         </div>
 
-        <div class="mb-5">
-            <label for="kategori_id" class="block text-sm font-semibold text-gray-700 mb-2">Kategori *</label>
+        <div class="mb-4.5">
+            <label for="kategori_id" class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Kategori *</label>
             <select id="kategori_id" name="kategori_id" required
-                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('kategori_id') border-red-500 @else border-gray-300 @enderror">
-                <option value="">-- Pilih Kategori --</option>
+                class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors @error('kategori_id') border-red-600 @else border-slate-200 @enderror">
+                <option value="">-- Pilih kategori --</option>
                 @foreach($kategori as $k)
                     <option value="{{ $k->id }}" {{ old('kategori_id', $produk->kategori_id) == $k->id ? 'selected' : '' }}>
                         {{ $k->nama }}
                     </option>
                 @endforeach
             </select>
-            @error('kategori_id')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
+            @error('kategori_id') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-5">
-            <div>
-                <label for="harga" class="block text-sm font-semibold text-gray-700 mb-2">Harga *</label>
+        <div class="grid grid-cols-2 gap-3.5">
+            <div class="mb-4.5">
+                <label for="harga" class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Harga *</label>
                 <input type="number" id="harga" name="harga" value="{{ old('harga', $produk->harga) }}" min="0" step="100" required
-                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('harga') border-red-500 @else border-gray-300 @enderror">
-                @error('harga')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
+                    class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors @error('harga') border-red-600 @else border-slate-200 @enderror">
+                @error('harga') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror
             </div>
 
-            <div>
-                <label for="stok" class="block text-sm font-semibold text-gray-700 mb-2">Stok *</label>
+            <div class="mb-4.5">
+                <label for="stok" class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Stok *</label>
                 <input type="number" id="stok" name="stok" value="{{ old('stok', $produk->stok) }}" min="0" required
-                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('stok') border-red-500 @else border-gray-300 @enderror">
-                @error('stok')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
+                    class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors @error('stok') border-red-600 @else border-slate-200 @enderror">
+                @error('stok') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror
             </div>
         </div>
 
-        <div class="mb-6">
-            <label for="deskripsi" class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi</label>
+        <div class="mb-4.5">
+            <label for="deskripsi" class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Deskripsi</label>
             <textarea id="deskripsi" name="deskripsi" rows="3"
-                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('deskripsi') border-red-500 @else border-gray-300 @enderror">{{ old('deskripsi', $produk->deskripsi) }}</textarea>
-            @error('deskripsi')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
+                class="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors resize-y">{{ old('deskripsi', $produk->deskripsi) }}</textarea>
+            @error('deskripsi') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror
         </div>
 
-        <div class="flex gap-3">
-            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow transition">
-                Update Produk
+        <div class="flex gap-2.5 mt-6">
+            <button type="submit" class="flex-1 py-3 rounded-[9px] text-[13px] font-bold text-center cursor-pointer bg-blue-600 text-white shadow-[0_3px_10px_rgba(37,99,235,0.3)] hover:bg-blue-700 transition-colors">
+                💾 Update produk
             </button>
-            <a href="/admin/produk" class="flex-1 text-center bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-lg transition">
+            <a href="/admin/produk" class="flex-1 py-3 rounded-[9px] text-[13px] font-bold text-center no-underline bg-slate-50 text-slate-500 border border-slate-200 hover:border-red-600 hover:text-red-600 transition-colors">
                 Batal
             </a>
         </div>

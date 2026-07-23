@@ -27,12 +27,13 @@ class DashboardController extends Controller
     // Dashboard Admin
     public function admin()
     {
-        // Hitung statistik untuk admin (semua kasir)
-        $totalPenjualan = Transaksi::whereDate('tanggal_transaksi', today())->sum('total_pembayaran');
-        $totalTransaksi = Transaksi::whereDate('tanggal_transaksi', today())->count();
+        // Hitung statistik untuk admin (semua kasir, hanya transaksi dibayar)
+        $baseDashboard = Transaksi::whereDate('tanggal_transaksi', today())->where('status', 'dibayar');
+        $totalPenjualan = (clone $baseDashboard)->sum('total_pembayaran');
+        $totalTransaksi = (clone $baseDashboard)->count();
         $totalProduk = Produk::count();
         $totalPengguna = Pengguna::where('peran', 'kasir')->count();
-        
+
         // Ambil transaksi terbaru
         $transaksiTerbaru = Transaksi::with('pengguna')
                                     ->orderBy('tanggal_transaksi', 'desc')
@@ -55,28 +56,23 @@ class DashboardController extends Controller
         $kasirId = session('user_id');
         $kasirName = session('user_name');
         
-        // Hitung statistik hari ini (hanya untuk kasir ini)
-        // PENTING: Gunakan nama kolom yang sesuai dengan database
-        $totalPenjualan = Transaksi::where('pengguna_id', $kasirId)
-                                   ->whereDate('tanggal_transaksi', today())
-                                   ->sum('total_pembayaran');
-        
-        $totalTransaksi = Transaksi::where('pengguna_id', $kasirId)
-                                   ->whereDate('tanggal_transaksi', today())
-                                   ->count();
-        
+        // Hitung statistik hari ini (hanya transaksi dibayar milik kasir ini)
+        $baseKasir = Transaksi::where('pengguna_id', $kasirId)
+                               ->whereDate('tanggal_transaksi', today())
+                               ->where('status', 'dibayar');
+
+        $totalPenjualan = (clone $baseKasir)->sum('total_pembayaran');
+        $totalTransaksi = (clone $baseKasir)->count();
+
         // Hitung rata-rata transaksi
         $rataTransaksi = $totalTransaksi > 0 ? $totalPenjualan / $totalTransaksi : 0;
-        
+
         // Cek status laporan hari ini
-        $statusLaporan = 'Belum Submit'; // Default
-        
-        // Uncomment jika sudah ada model Laporan
-        // $laporanHariIni = \App\Models\Laporan::where('pengguna_id', $kasirId)
-        //                                      ->whereDate('tanggal', today())
-        //                                      ->first();
-        // $statusLaporan = $laporanHariIni ? 'Sudah Submit' : 'Belum Submit';
-        
+        $laporanHariIni = \App\Models\LaporanKasir::where('pengguna_id', $kasirId)
+                                                   ->whereDate('tanggal', today())
+                                                   ->first();
+        $statusLaporan = $laporanHariIni ? 'Sudah Submit' : 'Belum Submit';
+
         // Ambil transaksi terakhir (5 transaksi)
         $transaksiTerakhir = Transaksi::where('pengguna_id', $kasirId)
                                       ->whereDate('tanggal_transaksi', today())
@@ -84,18 +80,11 @@ class DashboardController extends Controller
                                       ->orderBy('tanggal_transaksi', 'desc')
                                       ->limit(5)
                                       ->get();
-        
-        // Hitung breakdown per metode pembayaran
-        $tunai = Transaksi::where('pengguna_id', $kasirId)
-                         ->whereDate('tanggal_transaksi', today())
-                         ->where('metode_pembayaran', 'tunai')
-                         ->sum('total_pembayaran');
-        
-        $qris = Transaksi::where('pengguna_id', $kasirId)
-                        ->whereDate('tanggal_transaksi', today())
-                        ->where('metode_pembayaran', 'qris')
-                        ->sum('total_pembayaran');
-        
+
+        // Hitung breakdown per metode pembayaran (hanya transaksi dibayar)
+        $tunai = (clone $baseKasir)->where('metode_pembayaran', 'tunai')->sum('total_pembayaran');
+        $qris  = (clone $baseKasir)->where('metode_pembayaran', 'qris')->sum('total_pembayaran');
+
         // Set transfer = 0 karena di database hanya ada tunai & qris
         $transfer = 0;
         

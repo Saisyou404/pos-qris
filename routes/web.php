@@ -7,6 +7,7 @@ use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\LaporanKasirController;
 use App\Http\Controllers\KasirController;
 
 /*
@@ -88,6 +89,13 @@ Route::middleware(['ceklogin'])->group(function () {
         // LAPORAN ADMIN
         Route::get('/admin/laporan', [LaporanController::class, 'index'])
              ->name('admin.laporan');
+
+        // LAPORAN KASIR (laporan harian yang disubmit kasir)
+        // PENTING: harus didaftarkan SEBELUM /admin/laporan/{id} di bawah,
+        // supaya "kasir" tidak tertangkap sebagai {id} oleh route show().
+        Route::get('/admin/laporan/kasir', [LaporanKasirController::class, 'index'])
+             ->name('admin.laporan.kasir');
+
         Route::get('/admin/laporan/{id}', [LaporanController::class, 'show'])
              ->name('admin.laporan.show');
     });
@@ -116,6 +124,9 @@ Route::middleware(['ceklogin'])->group(function () {
         // RIWAYAT TRANSAKSI
         Route::get('/kasir/riwayat', [KasirController::class, 'riwayat'])
              ->name('kasir.riwayat');
+          // CETAK STRUK
+        Route::get('/kasir/struk/{invoice}', [TransaksiController::class, 'cetakStruk'])
+             ->name('kasir.struk');
 
         // LAPORAN HARIAN
         Route::get('/kasir/laporan', [KasirController::class, 'laporanInput'])

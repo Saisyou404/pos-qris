@@ -5,662 +5,203 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Kasir POS — POS QRIS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
-        :root {
-            --bg:           #f0f4f8;
-            --bg2:          #ffffff;
-            --bg3:          #f8fafc;
-            --border:       #e2e8f0;
-            --accent:       #2563eb;
-            --accent-light: #eff6ff;
-            --success:      #16a34a;
-            --success-light:#f0fdf4;
-            --warning:      #d97706;
-            --danger:       #dc2626;
-            --danger-light: #fef2f2;
-            --text:         #0f172a;
-            --text2:        #64748b;
-            --text3:        #94a3b8;
-            --header-h:     58px;
-            --shadow:       0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
-            --shadow-md:    0 4px 14px rgba(0,0,0,0.08);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            height: var(--header-h);
-            background: var(--bg2);
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center;
-            padding: 0 20px; gap: 12px;
-            box-shadow: var(--shadow);
-            flex-shrink: 0;
-        }
-
-        .header-logo {
-            width: 34px; height: 34px;
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            border-radius: 9px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
-            box-shadow: 0 3px 8px rgba(37,99,235,0.25);
-        }
-
-        .header-title  { font-size: 15px; font-weight: 800; color: var(--text); }
-        .header-sub    { font-size: 10px; color: var(--text3); }
-        .header-spacer { flex: 1; }
-
-        .header-time {
-            font-family: 'DM Mono', monospace;
-            font-size: 13px; font-weight: 500;
-            color: var(--text2);
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 12px;
-        }
-
-        .header-user {
-            font-size: 12px; font-weight: 600;
-            color: var(--text2);
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 12px;
-            display: flex; align-items: center; gap: 6px;
-        }
-
-        .back-btn {
-            display: flex; align-items: center; gap: 6px;
-            padding: 7px 14px;
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text2);
-            text-decoration: none;
-            font-size: 12px; font-weight: 600;
-            transition: all 0.15s;
-        }
-        .back-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-
-        /* ===== MAIN LAYOUT ===== */
-        .main-container {
-            display: grid;
-            grid-template-columns: 1fr 400px;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        /* ===== PRODUCTS PANEL ===== */
-        .products-panel {
-            background: var(--bg);
-            padding: 16px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .products-panel::-webkit-scrollbar { width: 4px; }
-        .products-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-        /* Search */
-        .search-wrap { position: relative; }
-        .search-wrap input {
-            width: 100%;
-            padding: 10px 14px 10px 38px;
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            font-family: inherit; font-size: 13px;
-            color: var(--text);
-            outline: none;
-            transition: border-color 0.15s;
-            box-shadow: var(--shadow);
-        }
-        .search-wrap input:focus { border-color: var(--accent); }
-        .search-icon {
-            position: absolute; left: 12px; top: 50%;
-            transform: translateY(-50%);
-            font-size: 14px; pointer-events: none;
-        }
-
-        /* Category Tabs */
-        .category-tabs {
-            display: flex; gap: 8px;
-            overflow-x: auto; padding-bottom: 2px;
-        }
-        .category-tabs::-webkit-scrollbar { height: 3px; }
-        .category-tabs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-        .category-tab {
-            padding: 7px 16px;
-            border-radius: 99px;
-            font-family: inherit;
-            font-size: 12px; font-weight: 600;
-            cursor: pointer;
-            border: 1px solid var(--border);
-            background: var(--bg2);
-            color: var(--text2);
-            white-space: nowrap;
-            transition: all 0.15s;
-            box-shadow: var(--shadow);
-        }
-        .category-tab:hover  { border-color: var(--accent); color: var(--accent); }
-        .category-tab.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #fff;
-            box-shadow: 0 3px 10px rgba(37,99,235,0.3);
-        }
-
-        /* Products Grid */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
-            gap: 12px;
-        }
-
-        .product-card {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 14px 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-        .product-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37,99,235,0.12);
-        }
-
-        .product-icon {
-            font-size: 36px;
-            margin-bottom: 8px;
-            line-height: 1;
-        }
-
-        .product-name {
-            font-weight: 700; font-size: 12.5px;
-            margin-bottom: 5px; color: var(--text);
-            line-height: 1.35;
-        }
-
-        .product-price {
-            color: var(--accent);
-            font-weight: 800; font-size: 13px;
-        }
-
-        .product-stock {
-            font-size: 10px; color: var(--text3);
-            margin-top: 4px;
-        }
-
-        .product-stock.low { color: var(--danger); font-weight: 600; }
-
-        /* ===== CART PANEL ===== */
-        .cart-panel {
-            background: var(--bg2);
-            border-left: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            box-shadow: -2px 0 8px rgba(0,0,0,0.04);
-        }
-
-        .cart-header {
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border);
-            background: var(--bg3);
-        }
-
-        .cart-title {
-            font-size: 14px; font-weight: 800;
-            color: var(--text); margin-bottom: 4px;
-        }
-
-        .transaction-info {
-            display: flex; justify-content: space-between;
-            font-size: 11px; color: var(--text3);
-            font-family: 'DM Mono', monospace;
-        }
-
-        .cart-items {
-            flex: 1; overflow-y: auto;
-            padding: 12px;
-        }
-        .cart-items::-webkit-scrollbar { width: 3px; }
-        .cart-items::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-        .empty-cart {
-            text-align: center; padding: 40px 20px;
-            color: var(--text3);
-        }
-        .empty-cart-icon { font-size: 48px; margin-bottom: 10px; opacity: 0.4; }
-        .empty-cart p    { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-        .empty-cart small{ font-size: 11px; }
-
-        .cart-item {
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            padding: 11px 13px;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: border-color 0.15s;
-        }
-        .cart-item:hover { border-color: var(--accent); }
-
-        .item-info { flex: 1; min-width: 0; }
-        .item-name {
-            font-weight: 700; font-size: 12.5px;
-            color: var(--text);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            margin-bottom: 3px;
-        }
-        .item-price { font-size: 11px; color: var(--text2); }
-
-        .item-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-
-        .qty-btn {
-            width: 26px; height: 26px;
-            border: 1px solid var(--border);
-            background: var(--bg2);
-            color: var(--text2);
-            border-radius: 7px;
-            cursor: pointer;
-            font-size: 14px; font-weight: 700;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.15s;
-        }
-        .qty-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-
-        .qty-display {
-            width: 28px; text-align: center;
-            font-weight: 800; font-size: 13px;
-        }
-
-        .delete-btn {
-            width: 26px; height: 26px;
-            background: var(--danger-light);
-            border: 1px solid #fecaca;
-            color: var(--danger);
-            border-radius: 7px;
-            cursor: pointer; font-size: 12px;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.15s;
-        }
-        .delete-btn:hover { background: var(--danger); color: white; }
-
-        /* Cart Summary */
-        .cart-summary {
-            padding: 14px 18px;
-            border-top: 1px solid var(--border);
-            background: var(--bg3);
-        }
-
-        .summary-row {
-            display: flex; justify-content: space-between;
-            font-size: 12.5px; color: var(--text2);
-            margin-bottom: 8px;
-        }
-        .summary-row.total {
-            font-size: 16px; font-weight: 800;
-            color: var(--text);
-            padding-top: 10px;
-            border-top: 1px solid var(--border);
-            margin-bottom: 0; margin-top: 2px;
-        }
-        .summary-row.total span:last-child { color: var(--accent); }
-
-        /* Payment Section */
-        .payment-section {
-            padding: 14px 18px 16px;
-            border-top: 1px solid var(--border);
-            background: var(--bg2);
-        }
-
-        .payment-methods {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px; margin-bottom: 12px;
-        }
-
-        .payment-btn {
-            padding: 10px;
-            border: 1.5px solid var(--border);
-            background: var(--bg3);
-            border-radius: 9px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 12px; font-weight: 600;
-            color: var(--text2);
-            transition: all 0.15s;
-            display: flex; flex-direction: column;
-            align-items: center; gap: 3px;
-        }
-        .payment-btn .pay-icon { font-size: 18px; }
-        .payment-btn:hover  { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-        .payment-btn.active {
-            border-color: var(--accent);
-            background: var(--accent-light);
-            color: var(--accent);
-            box-shadow: 0 2px 8px rgba(37,99,235,0.15);
-        }
-
-        .checkout-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            color: white; border: none;
-            border-radius: 11px;
-            font-family: inherit;
-            font-size: 14px; font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
-        }
-        .checkout-btn:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(37,99,235,0.4);
-        }
-        .checkout-btn:disabled {
-            background: var(--border);
-            color: var(--text3);
-            box-shadow: none; cursor: not-allowed;
-        }
-
-        /* ===== MODALS ===== */
-        .modal {
-            display: none;
-            position: fixed; inset: 0;
-            background: rgba(15,23,42,0.5);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            align-items: center; justify-content: center;
-        }
-        .modal.active { display: flex; }
-
-        .modal-content {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 28px;
-            width: 420px; max-width: 95vw;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-        }
-
-        .modal-header {
-            text-align: center; margin-bottom: 20px;
-        }
-        .modal-header h3 { font-size: 18px; font-weight: 800; color: var(--text); }
-        .modal-header p  { font-size: 12px; color: var(--text2); margin-top: 3px; }
-
-        .amount-display {
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            padding: 16px; border-radius: 12px;
-            text-align: center; margin-bottom: 16px;
-        }
-        .amount-label { font-size: 11px; color: var(--text2); font-weight: 600; margin-bottom: 4px; }
-        .amount-value { font-size: 26px; font-weight: 800; color: var(--text); }
-
-        .change-display {
-            background: var(--success-light);
-            border: 1px solid #bbf7d0;
-            padding: 14px; border-radius: 12px;
-            text-align: center; margin-bottom: 16px;
-        }
-        .change-display .amount-value { color: var(--success); }
-
-        .form-group { margin-bottom: 14px; }
-        .form-group label {
-            display: block; margin-bottom: 6px;
-            font-size: 12px; font-weight: 700;
-            color: var(--text2);
-        }
-        .form-group input {
-            width: 100%;
-            padding: 11px 14px;
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            font-family: inherit; font-size: 14px;
-            color: var(--text); outline: none;
-            transition: border-color 0.15s;
-        }
-        .form-group input:focus  { border-color: var(--accent); }
-        .form-group input[readonly] { color: var(--text2); }
-
-        .modal-actions { display: flex; gap: 10px; margin-top: 4px; }
-
-        .btn-secondary {
-            flex: 1; padding: 12px;
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            font-family: inherit; font-size: 13px; font-weight: 600;
-            color: var(--text2); cursor: pointer;
-            transition: all 0.15s;
-        }
-        .btn-secondary:hover { border-color: var(--danger); color: var(--danger); }
-
-        .btn-primary {
-            flex: 1; padding: 12px;
-            background: var(--accent);
-            color: white; border: none;
-            border-radius: 9px;
-            font-family: inherit; font-size: 13px; font-weight: 700;
-            cursor: pointer;
-            transition: all 0.15s;
-            box-shadow: 0 3px 10px rgba(37,99,235,0.3);
-        }
-        .btn-primary:hover:not(:disabled) { background: #1d4ed8; }
-        .btn-primary:disabled { background: var(--border); color: var(--text3); box-shadow: none; cursor: not-allowed; }
-
-        .success-icon { font-size: 56px; text-align: center; margin-bottom: 12px; }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar { width: 5px; height: 4px; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
     </style>
 </head>
 
-<script src="https://app.sandbox.midtrans.com/snap/snap.js"
-        data-client-key="{{ config('midtrans.client_key') }}">
-</script>
-
-<body>
+<body class="font-sans bg-slate-100 text-slate-900 h-screen overflow-hidden flex flex-col m-0 p-0">
 
     {{-- HEADER --}}
-    <div class="header">
-        <div class="header-logo">🛒</div>
+    <div class="h-[58px] bg-white border-b border-slate-200 flex items-center px-5 gap-3 shadow-sm shrink-0">
+        <div class="w-[34px] h-[34px] bg-gradient-to-br from-blue-600 to-violet-600 rounded-[9px] flex items-center justify-center text-base shadow-[0_3px_8px_rgba(37,99,235,0.25)]">🛒</div>
         <div>
-            <div class="header-title">Kasir POS</div>
-            <div class="header-sub">POS QRIS System</div>
+            <div class="text-[15px] font-extrabold text-slate-900">Kasir POS</div>
+            <div class="text-[10px] text-slate-400">POS QRIS System</div>
         </div>
-        <div class="header-spacer"></div>
-        <div class="header-time">🕐 <span id="currentTime">--:--</span></div>
-        <div class="header-user">👤 {{ session('user_name') }}</div>
-        <a href="{{ route('kasir.dashboard') }}" class="back-btn">← Kembali</a>
+        <div class="flex-1"></div>
+        <div class="font-mono text-[13px] font-medium text-slate-500 bg-slate-50 border border-slate-200 rounded-lg py-1.5 px-3">🕐 <span id="currentTime">--:--</span></div>
+        <div class="text-xs font-semibold text-slate-500 bg-slate-50 border border-slate-200 rounded-lg py-1.5 px-3 flex items-center gap-1.5">👤 {{ session('user_name') }}</div>
+        <a href="{{ route('kasir.dashboard') }}" class="flex items-center gap-1.5 py-1.5 px-3.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-500 no-underline text-xs font-semibold hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">← Kembali</a>
     </div>
 
     {{-- MAIN --}}
-    <div class="main-container">
+    <div class="grid grid-cols-[1fr_400px] flex-1 overflow-hidden">
 
         {{-- PRODUCTS PANEL --}}
-        <div class="products-panel">
-
-            <div class="search-wrap">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="Cari produk..." onkeyup="searchProduct()">
+        <div class="bg-slate-100 p-4 overflow-y-auto flex flex-col gap-3.5">
+            <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none">🔍</span>
+                <input type="text" id="searchInput" placeholder="Cari produk..." onkeyup="searchProduct()"
+                       class="w-full py-2.5 pl-[38px] pr-3.5 bg-white border border-slate-200 rounded-[10px] text-[13px] text-slate-900 outline-none shadow-sm focus:border-blue-600 transition-colors">
             </div>
 
-            <div class="category-tabs">
-                <button class="category-tab active" onclick="filterCategory('all', this)">Semua</button>
+            <div class="flex gap-2 overflow-x-auto pb-0.5">
+                <button class="category-tab py-1.5 px-4 rounded-full text-xs font-semibold cursor-pointer border whitespace-nowrap shadow-sm transition-colors border-blue-600 bg-blue-600 text-white shadow-[0_3px_10px_rgba(37,99,235,0.3)]"
+                        onclick="filterCategory('all', this)">Semua</button>
                 @foreach($kategoris as $kategori)
-                <button class="category-tab" onclick="filterCategory('{{ $kategori->id }}', this)">{{ $kategori->nama }}</button>
+                <button class="category-tab py-1.5 px-4 rounded-full text-xs font-semibold cursor-pointer border whitespace-nowrap shadow-sm transition-colors border-slate-200 bg-white text-slate-500 hover:border-blue-600 hover:text-blue-600"
+                        onclick="filterCategory('{{ $kategori->id }}', this)">{{ $kategori->nama }}</button>
                 @endforeach
             </div>
 
-            <div class="products-grid" id="productsGrid">
+            <div class="grid gap-3 grid-cols-[repeat(auto-fill,minmax(148px,1fr))]" id="productsGrid">
                 @foreach($produks as $produk)
-                <div class="product-card"
+                <div class="product-card bg-white border border-slate-200 rounded-xl py-3.5 px-3 cursor-pointer text-center shadow-sm hover:border-blue-600 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(37,99,235,0.12)] transition-all"
                      data-category="{{ $produk->kategori_id }}"
                      data-id="{{ $produk->id }}"
                      data-nama="{{ $produk->nama }}"
                      data-harga="{{ $produk->harga }}"
                      data-stok="{{ $produk->stok }}"
                      onclick="addToCartFromCard(this)">
-                    <div class="product-icon"></div>
-                    <div class="product-name">{{ $produk->nama }}</div>
-                    <div class="product-price">Rp {{ number_format($produk->harga, 0, ',', '.') }}</div>
-                    <div class="product-stock {{ $produk->stok <= 5 ? 'low' : '' }}">
+                    <div class="text-4xl mb-2 leading-none"></div>
+                    <div class="product-name font-bold text-[12.5px] mb-1.5 text-slate-900 leading-snug">{{ $produk->nama }}</div>
+                    <div class="text-blue-600 font-extrabold text-[13px]">Rp {{ number_format($produk->harga, 0, ',', '.') }}</div>
+                    <div class="text-[10px] mt-1 {{ $produk->stok <= 5 ? 'text-red-600 font-semibold' : 'text-slate-400' }}">
                         Stok: {{ $produk->stok }}{{ $produk->stok <= 5 ? ' ⚠️' : '' }}
                     </div>
                 </div>
                 @endforeach
             </div>
-
         </div>
 
         {{-- CART PANEL --}}
-        <div class="cart-panel">
-
-            <div class="cart-header">
-                <div class="cart-title">🛒 Keranjang Belanja</div>
-                <div class="transaction-info">
+        <div class="bg-white border-l border-slate-200 flex flex-col h-full shadow-[-2px_0_8px_rgba(0,0,0,0.04)]">
+            <div class="py-3.5 px-4.5 border-b border-slate-200 bg-slate-50">
+                <div class="text-sm font-extrabold text-slate-900 mb-1">🛒 Keranjang belanja</div>
+                <div class="flex justify-between text-[11px] text-slate-400 font-mono">
                     <span id="transactionNo">Transaksi #{{ $nomorTransaksi }}</span>
                     <span id="transactionTime">--:--</span>
                 </div>
             </div>
 
-            <div class="cart-items" id="cartItems">
-                <div class="empty-cart">
-                    <div class="empty-cart-icon">🛒</div>
-                    <p>Keranjang masih kosong</p>
-                    <small>Pilih produk untuk memulai transaksi</small>
+            <div class="cart-items flex-1 overflow-y-auto p-3" id="cartItems">
+                <div class="text-center py-10 px-5 text-slate-400">
+                    <div class="text-5xl mb-2.5 opacity-40">🛒</div>
+                    <p class="text-[13px] font-semibold mb-1">Keranjang masih kosong</p>
+                    <small class="text-[11px]">Pilih produk untuk memulai transaksi</small>
                 </div>
             </div>
 
-            <div class="cart-summary">
-                <div class="summary-row">
+            <div class="py-3.5 px-4.5 border-t border-slate-200 bg-slate-50">
+                <div class="flex justify-between text-[12.5px] text-slate-500 mb-2">
                     <span>Subtotal (<span id="itemCount">0</span> item)</span>
                     <span id="subtotal">Rp 0</span>
                 </div>
-                <div class="summary-row total">
+                <div class="flex justify-between text-base font-extrabold text-slate-900 pt-2.5 border-t border-slate-200">
                     <span>TOTAL</span>
-                    <span id="totalAmount">Rp 0</span>
+                    <span id="totalAmount" class="text-blue-600">Rp 0</span>
                 </div>
             </div>
 
-            <div class="payment-section">
-                <div class="payment-methods">
-                    <button class="payment-btn active" onclick="selectPayment('tunai', this)">
-                        <span class="pay-icon">💵</span> Tunai
+            <div class="py-3.5 px-4.5 pb-4 border-t border-slate-200 bg-white">
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <button class="payment-btn py-2.5 border-[1.5px] rounded-[9px] cursor-pointer text-xs font-semibold flex flex-col items-center gap-1 transition-colors border-blue-600 bg-blue-50 text-blue-600 shadow-[0_2px_8px_rgba(37,99,235,0.15)]"
+                            onclick="selectPayment('tunai', this)">
+                        <span class="text-lg">💵</span> Tunai
                     </button>
-                    <button class="payment-btn" onclick="selectPayment('qris', this)">
-                        <span class="pay-icon">📱</span> QRIS
+                    <button class="payment-btn py-2.5 border-[1.5px] rounded-[9px] cursor-pointer text-xs font-semibold flex flex-col items-center gap-1 transition-colors border-slate-200 bg-slate-50 text-slate-500 hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50"
+                            onclick="selectPayment('qris', this)">
+                        <span class="text-lg">📱</span> QRIS
                     </button>
                 </div>
-                <button class="checkout-btn" id="checkoutBtn" onclick="processPayment()" disabled>
-                    Proses Pembayaran →
+                <button id="checkoutBtn" onclick="processPayment()" disabled
+                        class="w-full py-3.5 bg-gradient-to-br from-blue-600 to-violet-600 text-white border-0 rounded-[11px] text-sm font-bold cursor-pointer shadow-[0_4px_12px_rgba(37,99,235,0.3)] hover:-translate-y-px hover:shadow-[0_6px_18px_rgba(37,99,235,0.4)] transition-all disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed disabled:translate-y-0 disabled:hover:translate-y-0">
+                    Proses pembayaran →
                 </button>
             </div>
-
         </div>
     </div>
 
     {{-- MODAL: PAYMENT --}}
-    <div class="modal" id="paymentModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>💳 Proses Pembayaran</h3>
-                <p>Pastikan jumlah sudah sesuai sebelum konfirmasi</p>
+    <div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[1000] items-center justify-center" id="paymentModal">
+        <div class="bg-white border border-slate-200 rounded-[18px] p-7 w-[420px] max-w-[95vw] shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+            <div class="text-center mb-5">
+                <h3 class="text-lg font-extrabold text-slate-900">💳 Proses pembayaran</h3>
+                <p class="text-xs text-slate-500 mt-1">Pastikan jumlah sudah sesuai sebelum konfirmasi</p>
             </div>
 
-            <div class="amount-display">
-                <div class="amount-label">Total Pembayaran</div>
-                <div class="amount-value" id="modalTotal">Rp 0</div>
+            <div class="bg-slate-50 border border-slate-200 py-4 rounded-xl text-center mb-4">
+                <div class="text-[11px] text-slate-500 font-semibold mb-1">Total pembayaran</div>
+                <div class="text-[26px] font-extrabold text-slate-900" id="modalTotal">Rp 0</div>
             </div>
 
-            <div class="form-group">
-                <label>Metode Pembayaran</label>
-                <input type="text" id="paymentMethod" readonly>
+            <div class="mb-3.5">
+                <label class="block mb-1.5 text-xs font-bold text-slate-500">Metode pembayaran</label>
+                <input type="text" id="paymentMethod" readonly
+                       class="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-[9px] text-sm text-slate-500 outline-none">
             </div>
 
-            <div class="form-group" id="cashInputGroup">
-                <label>Jumlah Uang Diterima</label>
-                <input type="number" id="cashReceived" placeholder="Masukkan jumlah uang..." oninput="calculateChange()">
+            <div class="mb-3.5" id="cashInputGroup">
+                <label class="block mb-1.5 text-xs font-bold text-slate-500">Jumlah uang diterima</label>
+                <input type="number" id="cashReceived" placeholder="Masukkan jumlah uang..." oninput="calculateChange()"
+                       class="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-[9px] text-sm text-slate-900 outline-none focus:border-blue-600 transition-colors">
             </div>
 
-            <div class="change-display" id="changeDisplay" style="display:none">
-                <div class="amount-label">Kembalian</div>
-                <div class="amount-value" id="changeAmount">Rp 0</div>
+            <div class="hidden bg-green-50 border border-green-200 py-3.5 rounded-xl text-center mb-4" id="changeDisplay">
+                <div class="text-[11px] text-slate-500 font-semibold mb-1">Kembalian</div>
+                <div class="text-[26px] font-extrabold text-green-600" id="changeAmount">Rp 0</div>
             </div>
 
-            <div class="modal-actions">
-                <button class="btn-secondary" onclick="closePaymentModal()">Batal</button>
-                <button class="btn-primary" id="confirmPayBtn" onclick="confirmPayment()" disabled>Konfirmasi Bayar</button>
+            <div class="flex gap-2.5 mt-1">
+                <button onclick="closePaymentModal()"
+                        class="flex-1 py-3 bg-slate-50 border border-slate-200 rounded-[9px] text-[13px] font-semibold text-slate-500 cursor-pointer hover:border-red-600 hover:text-red-600 transition-colors">Batal</button>
+                <button id="confirmPayBtn" onclick="confirmPayment()" disabled
+                        class="flex-1 py-3 bg-blue-600 text-white border-0 rounded-[9px] text-[13px] font-bold cursor-pointer shadow-[0_3px_10px_rgba(37,99,235,0.3)] hover:bg-blue-700 transition-colors disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed">Konfirmasi bayar</button>
             </div>
         </div>
     </div>
 
     {{-- MODAL: SUCCESS --}}
-    <div class="modal" id="successModal">
-        <div class="modal-content">
-            <div class="success-icon">✅</div>
-            <div class="modal-header">
-                <h3>Transaksi Berhasil!</h3>
-                <p>Pembayaran telah diterima</p>
+    <div class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[1000] items-center justify-center" id="successModal">
+        <div class="bg-white border border-slate-200 rounded-[18px] p-7 w-[420px] max-w-[95vw] shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+            <div class="text-[56px] text-center mb-3">✅</div>
+            <div class="text-center mb-5">
+                <h3 class="text-lg font-extrabold text-slate-900">Transaksi berhasil!</h3>
+                <p class="text-xs text-slate-500 mt-1">Pembayaran telah diterima</p>
             </div>
 
-            <div class="amount-display">
-                <div class="amount-label">Total Pembayaran</div>
-                <div class="amount-value" id="successTotal">Rp 0</div>
+            <div class="bg-slate-50 border border-slate-200 py-4 rounded-xl text-center mb-4">
+                <div class="text-[11px] text-slate-500 font-semibold mb-1">Total pembayaran</div>
+                <div class="text-[26px] font-extrabold text-slate-900" id="successTotal">Rp 0</div>
             </div>
 
-            <div class="change-display" id="successChange">
-                <div class="amount-label">Kembalian</div>
-                <div class="amount-value" id="successChangeAmount">Rp 0</div>
+            <div class="hidden bg-green-50 border border-green-200 py-3.5 rounded-xl text-center mb-4" id="successChange">
+                <div class="text-[11px] text-slate-500 font-semibold mb-1">Kembalian</div>
+                <div class="text-[26px] font-extrabold text-green-600" id="successChangeAmount">Rp 0</div>
             </div>
 
-            <div class="modal-actions">
-                <button class="btn-primary" onclick="newTransaction()" style="flex:1">
-                    + Transaksi Baru
+            <div class="flex gap-2.5 mt-1">
+                <button onclick="cetakStruk()"
+                        class="flex-1 py-3 bg-slate-50 border border-slate-200 rounded-[9px] text-[13px] font-semibold text-slate-500 cursor-pointer hover:border-blue-600 hover:text-blue-600 transition-colors">
+                    🖨 Cetak struk
+                </button>
+                <button onclick="newTransaction()"
+                        class="flex-1 py-3 bg-blue-600 text-white border-0 rounded-[9px] text-[13px] font-bold cursor-pointer shadow-[0_3px_10px_rgba(37,99,235,0.3)] hover:bg-blue-700 transition-colors">
+                    + Transaksi baru
                 </button>
             </div>
         </div>
     </div>
 
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="{{ config('midtrans.client_key') }}"></script>
+
     <script>
         let cart = [];
         let selectedPaymentMethod = 'tunai';
+        let currentInvoice = '';
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
         // ===== CLOCK =====
         function updateTime() {
             const now  = new Date();
             const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('currentTime').textContent    = time;
+            document.getElementById('currentTime').textContent     = time;
             document.getElementById('transactionTime').textContent = time;
         }
         updateTime();
@@ -693,26 +234,26 @@
 
             if (cart.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-cart">
-                        <div class="empty-cart-icon">🛒</div>
-                        <p>Keranjang masih kosong</p>
-                        <small>Pilih produk untuk memulai transaksi</small>
+                    <div class="text-center py-10 px-5 text-slate-400">
+                        <div class="text-5xl mb-2.5 opacity-40">🛒</div>
+                        <p class="text-[13px] font-semibold mb-1">Keranjang masih kosong</p>
+                        <small class="text-[11px]">Pilih produk untuk memulai transaksi</small>
                     </div>`;
                 document.getElementById('checkoutBtn').disabled = true;
             } else {
                 container.innerHTML = cart.map((item, i) => `
-                    <div class="cart-item">
-                        <div class="item-info">
-                            <div class="item-name"> ${item.nama}</div>
-                            <div class="item-price">Rp ${item.harga.toLocaleString('id-ID')} × ${item.qty}
+                    <div class="bg-slate-50 border border-slate-200 py-2.5 px-3.5 rounded-[10px] mb-2 flex items-center gap-2.5 hover:border-blue-600 transition-colors">
+                        <div class="flex-1 min-w-0">
+                            <div class="font-bold text-[12.5px] text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis mb-0.5">${item.nama}</div>
+                            <div class="text-[11px] text-slate-500">Rp ${item.harga.toLocaleString('id-ID')} × ${item.qty}
                                 = <strong>Rp ${(item.harga * item.qty).toLocaleString('id-ID')}</strong>
                             </div>
                         </div>
-                        <div class="item-controls">
-                            <button class="qty-btn" onclick="decreaseQty(${i})">−</button>
-                            <span class="qty-display">${item.qty}</span>
-                            <button class="qty-btn" onclick="increaseQty(${i})">+</button>
-                            <button class="delete-btn" onclick="removeItem(${i})">🗑</button>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button onclick="decreaseQty(${i})" class="w-[26px] h-[26px] border border-slate-200 bg-white text-slate-500 rounded-[7px] cursor-pointer text-sm font-bold flex items-center justify-center hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">−</button>
+                            <span class="w-7 text-center font-extrabold text-[13px]">${item.qty}</span>
+                            <button onclick="increaseQty(${i})" class="w-[26px] h-[26px] border border-slate-200 bg-white text-slate-500 rounded-[7px] cursor-pointer text-sm font-bold flex items-center justify-center hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">+</button>
+                            <button onclick="removeItem(${i})" class="w-[26px] h-[26px] bg-red-50 border border-red-200 text-red-600 rounded-[7px] cursor-pointer text-xs flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors">🗑</button>
                         </div>
                     </div>`).join('');
                 document.getElementById('checkoutBtn').disabled = false;
@@ -737,16 +278,40 @@
         function updateSummary() {
             const total     = cart.reduce((s, item) => s + item.harga * item.qty, 0);
             const itemCount = cart.reduce((s, item) => s + item.qty, 0);
-            document.getElementById('itemCount').textContent    = itemCount;
-            document.getElementById('subtotal').textContent     = 'Rp ' + total.toLocaleString('id-ID');
-            document.getElementById('totalAmount').textContent  = 'Rp ' + total.toLocaleString('id-ID');
+            document.getElementById('itemCount').textContent   = itemCount;
+            document.getElementById('subtotal').textContent    = 'Rp ' + total.toLocaleString('id-ID');
+            document.getElementById('totalAmount').textContent = 'Rp ' + total.toLocaleString('id-ID');
         }
 
-        // ===== PAYMENT =====
+        // ===== PAYMENT METHOD TOGGLE =====
+        const paymentBtnBase   = ['border-slate-200', 'bg-slate-50', 'text-slate-500'];
+        const paymentBtnActive = ['border-blue-600', 'bg-blue-50', 'text-blue-600', 'shadow-[0_2px_8px_rgba(37,99,235,0.15)]'];
+
         function selectPayment(method, btn) {
             selectedPaymentMethod = method;
-            document.querySelectorAll('.payment-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            document.querySelectorAll('.payment-btn').forEach(b => {
+                b.classList.remove(...paymentBtnActive);
+                b.classList.add(...paymentBtnBase);
+            });
+            btn.classList.remove(...paymentBtnBase);
+            btn.classList.add(...paymentBtnActive);
+        }
+
+        // ===== CATEGORY TAB TOGGLE =====
+        const catTabBase   = ['border-slate-200', 'bg-white', 'text-slate-500'];
+        const catTabActive = ['border-blue-600', 'bg-blue-600', 'text-white', 'shadow-[0_3px_10px_rgba(37,99,235,0.3)]'];
+
+        function filterCategory(category, btn) {
+            document.querySelectorAll('.category-tab').forEach(b => {
+                b.classList.remove(...catTabActive);
+                b.classList.add(...catTabBase);
+            });
+            btn.classList.remove(...catTabBase);
+            btn.classList.add(...catTabActive);
+
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.style.display = (category === 'all' || card.dataset.category === category) ? 'block' : 'none';
+            });
         }
 
         function processPayment() {
@@ -757,17 +322,18 @@
             document.getElementById('paymentMethod').value = methodNames[selectedPaymentMethod];
 
             if (selectedPaymentMethod === 'tunai') {
-                document.getElementById('cashInputGroup').style.display = 'block';
+                document.getElementById('cashInputGroup').classList.remove('hidden');
                 document.getElementById('cashReceived').value = '';
-                document.getElementById('changeDisplay').style.display = 'none';
+                document.getElementById('changeDisplay').classList.add('hidden');
                 document.getElementById('confirmPayBtn').disabled = true;
             } else {
-                document.getElementById('cashInputGroup').style.display = 'none';
-                document.getElementById('changeDisplay').style.display = 'none';
+                document.getElementById('cashInputGroup').classList.add('hidden');
+                document.getElementById('changeDisplay').classList.add('hidden');
                 document.getElementById('confirmPayBtn').disabled = false;
             }
 
-            document.getElementById('paymentModal').classList.add('active');
+            document.getElementById('paymentModal').classList.remove('hidden');
+            document.getElementById('paymentModal').classList.add('flex');
         }
 
         function calculateChange() {
@@ -776,17 +342,90 @@
             const change   = received - total;
 
             if (change >= 0) {
-                document.getElementById('changeDisplay').style.display = 'block';
+                document.getElementById('changeDisplay').classList.remove('hidden');
                 document.getElementById('changeAmount').textContent = 'Rp ' + change.toLocaleString('id-ID');
                 document.getElementById('confirmPayBtn').disabled = false;
             } else {
-                document.getElementById('changeDisplay').style.display = 'none';
+                document.getElementById('changeDisplay').classList.add('hidden');
                 document.getElementById('confirmPayBtn').disabled = true;
             }
         }
 
         function closePaymentModal() {
-            document.getElementById('paymentModal').classList.remove('active');
+            document.getElementById('paymentModal').classList.add('hidden');
+            document.getElementById('paymentModal').classList.remove('flex');
+        }
+
+        // ===== QRIS STATUS POLLING =====
+        const statusUrlTemplate = "{{ route('transaksi.status', ['invoice' => '__INVOICE__']) }}";
+
+        function showStatusToast(message, type = 'info') {
+            let toast = document.getElementById('qrisStatusToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'qrisStatusToast';
+                toast.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; z-index: 9999;
+                    padding: 14px 20px; border-radius: 10px; font-size: 14px;
+                    font-weight: 600; box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+                    max-width: 320px;
+                `;
+                document.body.appendChild(toast);
+            }
+            const colors = {
+                info:    { bg: '#eff6ff', color: '#2563eb' },
+                success: { bg: '#f0fdf4', color: '#16a34a' },
+                warning: { bg: '#fffbeb', color: '#d97706' },
+                error:   { bg: '#fef2f2', color: '#dc2626' },
+            };
+            const c = colors[type] || colors.info;
+            toast.style.background = c.bg;
+            toast.style.color = c.color;
+            toast.textContent = message;
+            toast.style.display = 'block';
+            return toast;
+        }
+
+        function hideStatusToast() {
+            const toast = document.getElementById('qrisStatusToast');
+            if (toast) toast.style.display = 'none';
+        }
+
+        async function pollTransaksiStatus(nomorInvoice, { maxAttempts = 20, intervalMs = 3000 } = {}) {
+            const url = statusUrlTemplate.replace('__INVOICE__', nomorInvoice);
+
+            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                    const res  = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                    const json = await res.json();
+
+                    if (json.success && json.status === 'dibayar')    return 'dibayar';
+                    if (json.success && json.status === 'dibatalkan') return 'dibatalkan';
+                } catch (e) {
+                    // gangguan jaringan sesaat, lanjut coba lagi
+                }
+                await new Promise(r => setTimeout(r, intervalMs));
+            }
+            return 'pending';
+        }
+
+        async function confirmAndWaitQris(nomorInvoice) {
+            showStatusToast('Menunggu konfirmasi pembayaran QRIS...', 'info');
+
+            const finalStatus = await pollTransaksiStatus(nomorInvoice);
+
+            if (finalStatus === 'dibayar') {
+                hideStatusToast();
+                currentInvoice = nomorInvoice;
+                document.getElementById('successTotal').textContent = 'Rp ' + cart.reduce((s, item) => s + item.harga * item.qty, 0).toLocaleString('id-ID');
+                document.getElementById('successChange').classList.add('hidden');
+                document.getElementById('successModal').classList.remove('hidden');
+                document.getElementById('successModal').classList.add('flex');
+            } else if (finalStatus === 'dibatalkan') {
+                showStatusToast('Pembayaran QRIS dibatalkan/kedaluwarsa.', 'error');
+            } else {
+                showStatusToast('Pembayaran masih diproses. Cek status di Riwayat Transaksi beberapa saat lagi.', 'warning');
+            }
         }
 
         async function confirmPayment() {
@@ -810,25 +449,28 @@
                 });
 
                 const result = await response.json();
-
                 if (!result.success) { alert(result.message); return; }
 
                 closePaymentModal();
 
                 if (selectedPaymentMethod === 'qris') {
                     if (!result.data || !result.data.snap_token) { alert('Snap token tidak ditemukan'); return; }
+                    const nomorInvoice = result.data.nomor_invoice;
+
                     snap.pay(result.data.snap_token, {
-                        onSuccess: () => { alert('Pembayaran QRIS berhasil'); location.reload(); },
-                        onPending: () => { alert('Silakan selesaikan pembayaran QRIS'); },
-                        onError:   () => { alert('Pembayaran QRIS gagal'); },
-                        onClose:   () => { alert('Pembayaran dibatalkan'); }
+                        onSuccess: () => confirmAndWaitQris(nomorInvoice),
+                        onPending: () => confirmAndWaitQris(nomorInvoice),
+                        onError:   () => showStatusToast('Pembayaran QRIS gagal.', 'error'),
+                        onClose:   () => showStatusToast('Pembayaran dibatalkan oleh pelanggan.', 'warning')
                     });
                 } else {
+                    currentInvoice = result.data.nomor_invoice;
                     document.getElementById('successTotal').textContent = 'Rp ' + total.toLocaleString('id-ID');
                     const change = received - total;
-                    document.getElementById('successChange').style.display = 'block';
+                    document.getElementById('successChange').classList.toggle('hidden', change <= 0);
                     document.getElementById('successChangeAmount').textContent = 'Rp ' + change.toLocaleString('id-ID');
-                    document.getElementById('successModal').classList.add('active');
+                    document.getElementById('successModal').classList.remove('hidden');
+                    document.getElementById('successModal').classList.add('flex');
                 }
 
             } catch (error) {
@@ -836,10 +478,20 @@
             }
         }
 
+        function cetakStruk() {
+            if (currentInvoice) {
+                window.open('/kasir/struk/' + currentInvoice, '_blank');
+            } else {
+                alert('Invoice tidak ditemukan.');
+            }
+        }
+
         function newTransaction() {
             cart = [];
+            currentInvoice = '';
             updateCartDisplay();
-            document.getElementById('successModal').classList.remove('active');
+            document.getElementById('successModal').classList.add('hidden');
+            document.getElementById('successModal').classList.remove('flex');
         }
 
         // ===== SEARCH & FILTER =====
@@ -848,14 +500,6 @@
             document.querySelectorAll('.product-card').forEach(card => {
                 const name = card.querySelector('.product-name').textContent.toLowerCase();
                 card.style.display = name.includes(q) ? 'block' : 'none';
-            });
-        }
-
-        function filterCategory(category, btn) {
-            document.querySelectorAll('.category-tab').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('.product-card').forEach(card => {
-                card.style.display = (category === 'all' || card.dataset.category === category) ? 'block' : 'none';
             });
         }
     </script>

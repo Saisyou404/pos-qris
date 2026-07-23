@@ -21,13 +21,17 @@ class Transaksi extends Model
         'nomor_invoice',
         'tanggal_transaksi',
         'total_pembayaran',
+        'uang_diterima',
+        'kembalian',
         'metode_pembayaran',
         'status',
     ];
 
     protected $casts = [
         'tanggal_transaksi' => 'datetime',
-        'total_pembayaran' => 'decimal:2'
+        'total_pembayaran'  => 'decimal:2',
+        'uang_diterima'     => 'decimal:2',
+        'kembalian'         => 'decimal:2',
     ];
 
     public function pengguna(): BelongsTo
