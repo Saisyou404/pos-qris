@@ -17,6 +17,7 @@
         <div class="mb-4.5">
             <label class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Nama kategori *</label>
             <input type="text" name="nama" value="{{ old('nama') }}" required autofocus
+                   oninvalid="this.setCustomValidity('Nama kategori wajib diisi.')" oninput="this.setCustomValidity('')"
                    class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors {{ $errors->has('nama') ? 'border-red-600' : 'border-slate-200' }}"
                    placeholder="Contoh: Minuman">
             @error('nama') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror

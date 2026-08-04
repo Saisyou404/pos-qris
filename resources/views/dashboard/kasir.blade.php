@@ -17,6 +17,55 @@
     </div>
 </div>
 
+{{-- Stats --}}
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mb-5">
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+        <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg mb-3 bg-blue-50">💰</div>
+        <div class="text-[11px] text-slate-500 font-semibold mb-1.5">Total penjualan</div>
+        <div class="text-[22px] font-extrabold leading-none text-blue-600">Rp {{ number_format($totalPenjualan, 0, ',', '.') }}</div>
+        <div class="text-[10px] text-slate-400 mt-1.5">Hari ini (kasir Anda)</div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+        <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg mb-3 bg-green-50">🛒</div>
+        <div class="text-[11px] text-slate-500 font-semibold mb-1.5">Total transaksi</div>
+        <div class="text-[22px] font-extrabold leading-none text-green-600">{{ $totalTransaksi }}</div>
+        <div class="text-[10px] text-slate-400 mt-1.5">Transaksi hari ini</div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+        <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg mb-3 bg-amber-50">📊</div>
+        <div class="text-[11px] text-slate-500 font-semibold mb-1.5">Rata-rata transaksi</div>
+        <div class="text-[22px] font-extrabold leading-none text-amber-600">Rp {{ number_format($rataTransaksi, 0, ',', '.') }}</div>
+        <div class="text-[10px] text-slate-400 mt-1.5">Per transaksi hari ini</div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+        <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg mb-3 bg-violet-50">📝</div>
+        <div class="text-[11px] text-slate-500 font-semibold mb-1.5">Laporan harian</div>
+        <div class="text-sm font-extrabold leading-none {{ $statusLaporan === 'Sudah Submit' ? 'text-green-600' : 'text-red-600' }}">{{ $statusLaporan }}</div>
+        <div class="text-[10px] text-slate-400 mt-1.5">Status hari ini</div>
+    </div>
+</div>
+
+{{-- Breakdown metode pembayaran --}}
+<div class="bg-white rounded-xl border border-slate-200 px-4.5 py-4 mb-5">
+    <div class="text-[11px] font-bold uppercase text-slate-400 mb-3">Breakdown pembayaran hari ini</div>
+    <div class="grid grid-cols-2 gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-[10px] flex items-center justify-center text-base bg-blue-50">💵</div>
+            <div>
+                <div class="text-[11px] text-slate-500">Tunai</div>
+                <div class="text-sm font-bold text-slate-900">Rp {{ number_format($tunai, 0, ',', '.') }}</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-[10px] flex items-center justify-center text-base bg-violet-50">📱</div>
+            <div>
+                <div class="text-[11px] text-slate-500">QRIS</div>
+                <div class="text-sm font-bold text-slate-900">Rp {{ number_format($qris, 0, ',', '.') }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="text-xs font-bold uppercase mb-2.5 text-slate-500">Aksi cepat</div>
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
     <a href="{{ route('kasir.transaksi') }}" class="rounded-xl p-4.5 no-underline text-slate-900 transition-all bg-linear-to-br from-blue-50 to-violet-50 border border-blue-200 hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)]">

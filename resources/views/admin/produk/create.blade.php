@@ -23,6 +23,7 @@
         <div class="mb-4.5">
             <label class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Nama produk *</label>
             <input type="text" name="nama" value="{{ old('nama') }}" required
+                   oninvalid="this.setCustomValidity('Nama produk wajib diisi.')" oninput="this.setCustomValidity('')"
                    class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors {{ $errors->has('nama') ? 'border-red-600' : 'border-slate-200' }}"
                    placeholder="Contoh: Nasi Goreng">
             @error('nama') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror
@@ -31,6 +32,7 @@
         <div class="mb-4.5">
             <label class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Kategori *</label>
             <select name="kategori_id" required
+                    oninvalid="this.setCustomValidity('Kategori wajib dipilih.')" onchange="this.setCustomValidity('')"
                     class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors {{ $errors->has('kategori_id') ? 'border-red-600' : 'border-slate-200' }}">
                 <option value="">-- Pilih kategori --</option>
                 @foreach($kategori as $k)
@@ -46,6 +48,7 @@
             <div class="mb-4.5">
                 <label class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Harga *</label>
                 <input type="number" name="harga" value="{{ old('harga') }}" min="0" step="100" required
+                       oninvalid="this.setCustomValidity(this.validity.rangeUnderflow ? 'Harga tidak boleh kurang dari 0.' : 'Harga wajib diisi.')" oninput="this.setCustomValidity('')"
                        class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors {{ $errors->has('harga') ? 'border-red-600' : 'border-slate-200' }}"
                        placeholder="0">
                 @error('harga') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror
@@ -54,6 +57,7 @@
             <div class="mb-4.5">
                 <label class="block mb-1.5 text-xs font-bold text-slate-500 uppercase tracking-wide">Stok *</label>
                 <input type="number" name="stok" value="{{ old('stok') }}" min="0" required
+                       oninvalid="this.setCustomValidity(this.validity.rangeUnderflow ? 'Stok tidak boleh kurang dari 0.' : 'Stok wajib diisi.')" oninput="this.setCustomValidity('')"
                        class="w-full py-2.5 px-3.5 bg-slate-50 border rounded-[9px] text-[13px] text-slate-900 outline-none focus:border-blue-600 transition-colors {{ $errors->has('stok') ? 'border-red-600' : 'border-slate-200' }}"
                        placeholder="0">
                 @error('stok') <div class="text-[11px] text-red-600 mt-1">{{ $message }}</div> @enderror

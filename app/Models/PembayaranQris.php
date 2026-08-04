@@ -11,7 +11,7 @@ class PembayaranQris extends Model
 
     protected $fillable = [
         'transaksi_id',
-        'invoice_qris',      
+        'invoice_qris',
         'qris_string',
         'qris_gambar',
         'nominal',
@@ -21,12 +21,41 @@ class PembayaranQris extends Model
     ];
 
     protected $casts = [
-        'data_callback' => 'array',
+        'data_callback'  => 'array',
         'waktu_callback' => 'datetime',
     ];
 
     public function transaksi(): BelongsTo
     {
         return $this->belongsTo(Transaksi::class, 'transaksi_id');
+    }
+
+    /**
+     * Tandai pembayaran QRIS sebagai berhasil.
+     */
+    public function tandaiBerhasil(?array $dataCallback = null): void
+    {
+        $this->status = 'berhasil';
+        $this->waktu_callback = now();
+
+        if ($dataCallback !== null) {
+            $this->data_callback = $dataCallback;
+        }
+
+        $this->save();
+    }
+
+    /**
+     * Tandai pembayaran QRIS sebagai kedaluwarsa/gagal.
+     */
+    public function tandaiKedaluwarsa(?array $dataCallback = null): void
+    {
+        $this->status = 'kedaluwarsa';
+
+        if ($dataCallback !== null) {
+            $this->data_callback = $dataCallback;
+        }
+
+        $this->save();
     }
 }

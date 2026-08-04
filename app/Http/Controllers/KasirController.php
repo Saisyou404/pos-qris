@@ -23,25 +23,12 @@ class KasirController extends Controller
         $query = Transaksi::with(['detailTransaksi.produk'])
             ->where('pengguna_id', $kasirId)
             ->whereBetween('tanggal_transaksi', [$startDate, $endDate . ' 23:59:59'])
+            ->when($status !== 'all', fn ($q) => $q->where('status', $status))
+            ->when($metode !== 'all', fn ($q) => $q->where('metode_pembayaran', $metode))
             ->orderBy('tanggal_transaksi', 'desc');
 
-        if ($status !== 'all') {
-            $query->where('status', $status);
-        }
-
-        if ($metode !== 'all') {
-            $query->where('metode_pembayaran', $metode);
-        }
-
-        $transaksi      = $query->paginate(15);
-        $totalPendapatan = $query->sum('total_pembayaran');
-
-        // Hitung ulang total_pendapatan dari query tanpa paginate
-        $totalPendapatan = Transaksi::where('pengguna_id', $kasirId)
-            ->whereBetween('tanggal_transaksi', [$startDate, $endDate . ' 23:59:59'])
-            ->when($status !== 'all', fn($q) => $q->where('status', $status))
-            ->when($metode !== 'all', fn($q) => $q->where('metode_pembayaran', $metode))
-            ->sum('total_pembayaran');
+        $totalPendapatan = (clone $query)->sum('total_pembayaran');
+        $transaksi       = $query->paginate(15);
 
         return view('kasir.riwayat-transaksi', compact(
             'transaksi',
@@ -61,15 +48,9 @@ class KasirController extends Controller
     {
         $kasirId = session('user_id');
 
-        // Cek apakah sudah submit hari ini
-        $laporanHariIni = LaporanKasir::where('pengguna_id', $kasirId)
-            ->whereDate('tanggal', today())
-            ->first();
-
-        $sudahSubmit = (bool) $laporanHariIni;
-
-        // Statistik hari ini dari transaksi
-        $statsHariIni = $this->getStatsHariIni($kasirId);
+        $laporanHariIni = LaporanKasir::laporanHariIni($kasirId);
+        $sudahSubmit    = (bool) $laporanHariIni;
+        $statsHariIni   = Transaksi::statistikHarian($kasirId);
 
         return view('kasir.laporan-input', compact(
             'sudahSubmit',
@@ -82,41 +63,24 @@ class KasirController extends Controller
     {
         $kasirId = session('user_id');
 
-        // Cegah double submit
-        $sudahAda = LaporanKasir::where('pengguna_id', $kasirId)
-            ->whereDate('tanggal', today())
-            ->exists();
-
-        if ($sudahAda) {
-            return redirect()->route('kasir.laporan.input')
-                ->with('error', 'Laporan hari ini sudah disubmit sebelumnya.');
-        }
-
         $request->validate([
-            'jam_mulai'  => 'required',
-            'jam_selesai'=> 'required',
-            'kondisi_toko'=> 'required|in:baik,sedang,buruk',
+            'jam_mulai'    => 'required',
+            'jam_selesai'  => 'required',
+            'kondisi_toko' => 'required|in:baik,sedang,buruk',
         ]);
 
-        // Ambil data dari sistem (bukan dari request, agar akurat)
-        $stats = $this->getStatsHariIni($kasirId);
+        try {
+            LaporanKasir::buatLaporanHarian($kasirId, $request->only([
+                'jam_mulai', 'jam_selesai', 'kondisi_toko', 'catatan_kejadian', 'saran',
+            ]));
 
-        LaporanKasir::create([
-            'pengguna_id'       => $kasirId,
-            'tanggal'           => today(),
-            'jam_mulai'         => $request->jam_mulai,
-            'jam_selesai'       => $request->jam_selesai,
-            'total_transaksi'   => $stats['total_transaksi'],
-            'total_pendapatan'  => $stats['total_pendapatan'],
-            'pendapatan_tunai'  => $stats['tunai'],
-            'pendapatan_qris'   => $stats['qris'],
-            'kondisi_toko'      => $request->kondisi_toko,
-            'catatan_kejadian'  => $request->catatan_kejadian,
-            'saran'             => $request->saran,
-        ]);
+            return redirect()->route('kasir.laporan.input')
+                ->with('success', 'Laporan harian berhasil disubmit!');
 
-        return redirect()->route('kasir.laporan.input')
-            ->with('success', 'Laporan harian berhasil disubmit!');
+        } catch (\Exception $e) {
+            return redirect()->route('kasir.laporan.input')
+                ->with('error', $e->getMessage());
+        }
     }
 
     // =========================================================
@@ -136,28 +100,5 @@ class KasirController extends Controller
             ->paginate(12);
 
         return view('kasir.laporan-riwayat', compact('laporan', 'bulan', 'tahun'));
-    }
-
-    // =========================================================
-    //  HELPER
-    // =========================================================
-
-    private function getStatsHariIni(int $kasirId): array
-    {
-        $base = Transaksi::where('pengguna_id', $kasirId)
-            ->whereDate('tanggal_transaksi', today())
-            ->where('status', 'dibayar');
-
-        return [
-            'total_transaksi'  => (clone $base)->count(),
-            'total_pendapatan' => (clone $base)->sum('total_pembayaran'),
-            'tunai'            => (clone $base)->where('metode_pembayaran', 'tunai')->sum('total_pembayaran'),
-            'qris'             => (clone $base)->where('metode_pembayaran', 'qris')->sum('total_pembayaran'),
-            'total_item'       => \App\Models\DetailTransaksi::whereHas('transaksi', function ($q) use ($kasirId) {
-                $q->where('pengguna_id', $kasirId)
-                  ->whereDate('tanggal_transaksi', today())
-                  ->where('status', 'dibayar');
-            })->sum('jumlah'),
-        ];
     }
 }

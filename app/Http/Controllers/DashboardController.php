@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaksi;
-use App\Models\User;
 use App\Models\Produk;
 use App\Models\Pengguna;
+use App\Models\LaporanKasir;
 
 class DashboardController extends Controller
 {
@@ -27,77 +27,52 @@ class DashboardController extends Controller
     // Dashboard Admin
     public function admin()
     {
-        // Hitung statistik untuk admin (semua kasir, hanya transaksi dibayar)
-        $baseDashboard = Transaksi::whereDate('tanggal_transaksi', today())->where('status', 'dibayar');
-        $totalPenjualan = (clone $baseDashboard)->sum('total_pembayaran');
-        $totalTransaksi = (clone $baseDashboard)->count();
-        $totalProduk = Produk::count();
+        $stats = Transaksi::statistikHarian(); // null = gabungan semua kasir
+
+        $totalProduk   = Produk::count();
         $totalPengguna = Pengguna::where('peran', 'kasir')->count();
 
-        // Ambil transaksi terbaru
         $transaksiTerbaru = Transaksi::with('pengguna')
-                                    ->orderBy('tanggal_transaksi', 'desc')
-                                    ->limit(10)
-                                    ->get();
-        
-        return view('dashboard.admin', compact(
-            'totalPenjualan',
-            'totalTransaksi',
-            'totalProduk',
-            'totalPengguna',
-            'transaksiTerbaru'
-        ));
+            ->orderBy('tanggal_transaksi', 'desc')
+            ->limit(10)
+            ->get();
+
+        return view('dashboard.admin', [
+            'totalPenjualan'   => $stats['total_pendapatan'],
+            'totalTransaksi'   => $stats['total_transaksi'],
+            'totalProduk'      => $totalProduk,
+            'totalPengguna'    => $totalPengguna,
+            'transaksiTerbaru' => $transaksiTerbaru,
+        ]);
     }
 
     // Dashboard Kasir
     public function kasir()
     {
-        // Ambil data kasir yang sedang login
-        $kasirId = session('user_id');
+        $kasirId   = session('user_id');
         $kasirName = session('user_name');
-        
-        // Hitung statistik hari ini (hanya transaksi dibayar milik kasir ini)
-        $baseKasir = Transaksi::where('pengguna_id', $kasirId)
-                               ->whereDate('tanggal_transaksi', today())
-                               ->where('status', 'dibayar');
 
-        $totalPenjualan = (clone $baseKasir)->sum('total_pembayaran');
-        $totalTransaksi = (clone $baseKasir)->count();
+        $stats = Transaksi::statistikHarian($kasirId);
 
-        // Hitung rata-rata transaksi
-        $rataTransaksi = $totalTransaksi > 0 ? $totalPenjualan / $totalTransaksi : 0;
+        $statusLaporan = LaporanKasir::sudahSubmitHariIni($kasirId) ? 'Sudah Submit' : 'Belum Submit';
 
-        // Cek status laporan hari ini
-        $laporanHariIni = \App\Models\LaporanKasir::where('pengguna_id', $kasirId)
-                                                   ->whereDate('tanggal', today())
-                                                   ->first();
-        $statusLaporan = $laporanHariIni ? 'Sudah Submit' : 'Belum Submit';
+        $transaksiTerakhir = Transaksi::milikKasir($kasirId)
+            ->hariIni()
+            ->with('detailTransaksi')
+            ->orderBy('tanggal_transaksi', 'desc')
+            ->limit(5)
+            ->get();
 
-        // Ambil transaksi terakhir (5 transaksi)
-        $transaksiTerakhir = Transaksi::where('pengguna_id', $kasirId)
-                                      ->whereDate('tanggal_transaksi', today())
-                                      ->with('detailTransaksi')
-                                      ->orderBy('tanggal_transaksi', 'desc')
-                                      ->limit(5)
-                                      ->get();
-
-        // Hitung breakdown per metode pembayaran (hanya transaksi dibayar)
-        $tunai = (clone $baseKasir)->where('metode_pembayaran', 'tunai')->sum('total_pembayaran');
-        $qris  = (clone $baseKasir)->where('metode_pembayaran', 'qris')->sum('total_pembayaran');
-
-        // Set transfer = 0 karena di database hanya ada tunai & qris
-        $transfer = 0;
-        
-        return view('dashboard.kasir', compact(
-            'kasirName',
-            'totalPenjualan',
-            'totalTransaksi',
-            'rataTransaksi',
-            'statusLaporan',
-            'transaksiTerakhir',
-            'tunai',
-            'transfer',
-            'qris'
-        ));
+        return view('dashboard.kasir', [
+            'kasirName'         => $kasirName,
+            'totalPenjualan'    => $stats['total_pendapatan'],
+            'totalTransaksi'    => $stats['total_transaksi'],
+            'rataTransaksi'     => $stats['rata_rata'],
+            'statusLaporan'     => $statusLaporan,
+            'transaksiTerakhir' => $transaksiTerakhir,
+            'tunai'             => $stats['tunai'],
+            'qris'              => $stats['qris'],
+            'transfer'          => 0, // di database hanya ada tunai & qris
+        ]);
     }
 }

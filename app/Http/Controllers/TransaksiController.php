@@ -8,19 +8,17 @@ use App\Models\DetailTransaksi;
 use App\Models\Produk;
 use App\Models\Kategori;
 use App\Models\PembayaranQris;
+use App\Models\CetakStruk;
+use App\Services\MidtransService;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Midtrans\Config;
-use Midtrans\Snap;
 
 class TransaksiController extends Controller
 {
-    public function __construct()
+    protected MidtransService $midtrans;
+
+    public function __construct(MidtransService $midtrans)
     {
-        Config::$serverKey    = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized  = config('midtrans.is_sanitized');
-        Config::$is3ds        = config('midtrans.is_3ds');
+        $this->midtrans = $midtrans;
     }
 
     public function create()
@@ -48,38 +46,32 @@ class TransaksiController extends Controller
             'items.*.harga'          => 'required|numeric|min:0',
             'total'                  => 'required|numeric|min:0',
             'metode_pembayaran'      => 'required|in:tunai,qris',
-            // Untuk tunai, uang_diterima WAJIB diisi dan tidak boleh kurang dari
-            // total. Sebelumnya ini hanya dicek di JS (bisa dilewati lewat
-            // request langsung ke endpoint ini), sekarang dipaksa di server juga.
             'uang_diterima'          => 'required_if:metode_pembayaran,tunai|nullable|numeric|gte:total',
         ]);
 
         DB::beginTransaction();
 
         try {
-            $nomorInvoice = 'INV-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
-
-            $isTunai      = $validated['metode_pembayaran'] === 'tunai';
-            $uangDiterima = $isTunai ? $validated['uang_diterima'] : null;
-            $kembalian    = $isTunai ? $uangDiterima - $validated['total'] : null;
+            $isTunai = $validated['metode_pembayaran'] === 'tunai';
 
             $transaksi = Transaksi::create([
                 'pengguna_id'       => session('user_id'),
-                'nomor_invoice'     => $nomorInvoice,
+                'nomor_invoice'     => Transaksi::buatNomorInvoice(),
                 'tanggal_transaksi' => now(),
                 'total_pembayaran'  => $validated['total'],
-                'uang_diterima'     => $uangDiterima,
-                'kembalian'         => $kembalian,
+                'uang_diterima'     => $isTunai ? $validated['uang_diterima'] : null,
+                'kembalian'         => $isTunai ? Transaksi::hitungKembalian($validated['total'], $validated['uang_diterima']) : null,
                 'metode_pembayaran' => $validated['metode_pembayaran'],
-                'status'            => $validated['metode_pembayaran'] === 'qris' ? 'pending' : 'dibayar',
+                'status'            => $isTunai ? 'dibayar' : 'pending',
             ]);
 
             foreach ($validated['items'] as $item) {
                 $produk = Produk::lockForUpdate()->find($item['produk_id']);
 
-                if ($produk->stok < $item['jumlah']) {
-                    throw new \Exception("Stok produk '{$produk->nama}' tidak mencukupi. Tersisa: {$produk->stok}");
-                }
+                // Validasi stok berlaku untuk semua metode pembayaran.
+                // Untuk QRIS, stok baru benar-benar dikurangi setelah pembayaran
+                // dikonfirmasi (lihat Transaksi::terapkanStatusMidtrans()).
+                $produk->pastikanStokCukup($item['jumlah']);
 
                 DetailTransaksi::create([
                     'transaksi_id' => $transaksi->id,
@@ -89,30 +81,23 @@ class TransaksiController extends Controller
                     'subtotal'     => $item['jumlah'] * $item['harga'],
                 ]);
 
-                if ($validated['metode_pembayaran'] === 'tunai') {
-                    $produk->decrement('stok', $item['jumlah']);
+                if ($isTunai) {
+                    $produk->kurangiStok($item['jumlah']);
                 }
             }
 
             $responseData = [
                 'transaksi_id'  => $transaksi->id,
-                'nomor_invoice' => $nomorInvoice,
+                'nomor_invoice' => $transaksi->nomor_invoice,
                 'total'         => $validated['total'],
             ];
 
-            if ($validated['metode_pembayaran'] === 'qris') {
-                $params = [
-                    'transaction_details' => [
-                        'order_id'     => $nomorInvoice,
-                        'gross_amount' => (int) $validated['total'],
-                    ],
-                ];
-
-                $snapToken = Snap::getSnapToken($params);
+            if (!$isTunai) {
+                $snapToken = $this->midtrans->buatSnapToken($transaksi->nomor_invoice, (int) $validated['total']);
 
                 PembayaranQris::create([
                     'transaksi_id' => $transaksi->id,
-                    'invoice_qris' => $nomorInvoice,
+                    'invoice_qris' => $transaksi->nomor_invoice,
                     'qris_string'  => $snapToken,
                     'nominal'      => $validated['total'],
                     'status'       => 'menunggu',
@@ -142,22 +127,20 @@ class TransaksiController extends Controller
 
     public function callback(Request $request)
     {
-        $serverKey = config('midtrans.server_key');
-        $hashed    = hash('sha512',
-            $request->order_id .
-            $request->status_code .
-            $request->gross_amount .
-            $serverKey
+        $signatureValid = $this->midtrans->verifikasiSignature(
+            $request->order_id,
+            $request->status_code,
+            $request->gross_amount,
+            (string) $request->signature_key
         );
 
-        if (!hash_equals($hashed, (string) $request->signature_key)) {
+        if (!$signatureValid) {
             return response()->json(['status' => 'invalid signature'], 403);
         }
 
         return DB::transaction(function () use ($request) {
-
             $transaksi = Transaksi::where('nomor_invoice', $request->order_id)
-                                  ->with('detailTransaksi')
+                                  ->with('detailTransaksi.produk', 'pembayaranQris')
                                   ->lockForUpdate()
                                   ->first();
 
@@ -165,49 +148,7 @@ class TransaksiController extends Controller
                 return response()->json(['status' => 'transaksi tidak ditemukan'], 404);
             }
 
-            if ($request->transaction_status === 'settlement' || $request->transaction_status === 'capture') {
-
-                if ($transaksi->status === 'dibayar') {
-                    return response()->json(['status' => 'ok', 'note' => 'sudah diproses sebelumnya']);
-                }
-
-                $transaksi->status = 'dibayar';
-                $transaksi->save();
-
-                foreach ($transaksi->detailTransaksi as $detail) {
-                    Produk::where('id', $detail->produk_id)
-                          ->decrement('stok', $detail->jumlah);
-                }
-
-                $qris = PembayaranQris::where('transaksi_id', $transaksi->id)->first();
-                if ($qris) {
-                    $qris->status         = 'berhasil';
-                    $qris->waktu_callback = now();
-                    $qris->data_callback  = $request->all();
-                    $qris->save();
-                }
-
-            } elseif ($request->transaction_status === 'pending') {
-
-                if ($transaksi->status !== 'dibayar' && $transaksi->status !== 'dibatalkan') {
-                    $transaksi->status = 'pending';
-                    $transaksi->save();
-                }
-
-            } elseif (in_array($request->transaction_status, ['expire', 'cancel', 'deny'])) {
-
-                if ($transaksi->status !== 'dibayar') {
-                    $transaksi->status = 'dibatalkan';
-                    $transaksi->save();
-
-                    $qris = PembayaranQris::where('transaksi_id', $transaksi->id)->first();
-                    if ($qris) {
-                        $qris->status        = 'kedaluwarsa';
-                        $qris->data_callback = $request->all();
-                        $qris->save();
-                    }
-                }
-            }
+            $transaksi->terapkanStatusMidtrans($request->transaction_status, $request->all());
 
             return response()->json(['status' => 'ok']);
         });
@@ -217,7 +158,7 @@ class TransaksiController extends Controller
     {
         $transaksi = Transaksi::where('nomor_invoice', $invoiceNumber)
                               ->where('pengguna_id', session('user_id'))
-                              ->with('pembayaranQris')
+                              ->with('detailTransaksi.produk', 'pembayaranQris')
                               ->first();
 
         if (!$transaksi) {
@@ -225,29 +166,8 @@ class TransaksiController extends Controller
         }
 
         try {
-            $statusMidtrans = \Midtrans\Transaction::status($invoiceNumber);
-
-            if (in_array($statusMidtrans->transaction_status, ['settlement', 'capture'])) {
-                if ($transaksi->status === 'pending') {
-                    $transaksi->status = 'dibayar';
-                    $transaksi->save();
-
-                    foreach ($transaksi->detailTransaksi as $detail) {
-                        Produk::where('id', $detail->produk_id)
-                              ->decrement('stok', $detail->jumlah);
-                    }
-
-                    $qris = $transaksi->pembayaranQris;
-                    if ($qris) {
-                        $qris->status         = 'berhasil';
-                        $qris->waktu_callback = now();
-                        $qris->save();
-                    }
-                }
-            } elseif (in_array($statusMidtrans->transaction_status, ['expire', 'cancel', 'deny'])) {
-                $transaksi->status = 'dibatalkan';
-                $transaksi->save();
-            }
+            $statusMidtrans = $this->midtrans->cekStatus($invoiceNumber);
+            $transaksi->terapkanStatusMidtrans($statusMidtrans->transaction_status);
 
             return response()->json([
                 'success' => true,
@@ -268,6 +188,14 @@ class TransaksiController extends Controller
             ->where('nomor_invoice', $invoice)
             ->where('pengguna_id', session('user_id'))
             ->firstOrFail();
+
+        // Catat/perbarui waktu cetak struk untuk transaksi ini.
+        // updateOrCreate dipakai karena satu transaksi hanya punya satu baris log
+        // (relasi hasOne pada Model Transaksi) meskipun struk dicetak ulang beberapa kali.
+        CetakStruk::updateOrCreate(
+            ['transaksi_id' => $transaksi->id],
+            ['waktu_cetak' => now()]
+        );
 
         return view('kasir.struk', compact('transaksi'));
     }

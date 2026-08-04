@@ -109,7 +109,7 @@
                         <span class="text-lg">📱</span> QRIS
                     </button>
                 </div>
-                <button id="checkoutBtn" onclick="processPayment()" disabled
+                <button id="checkoutBtn" onclick="processPayment()"
                         class="w-full py-3.5 bg-linear-to-br from-blue-600 to-violet-600 text-white border-0 rounded-[11px] text-sm font-bold cursor-pointer shadow-[0_4px_12px_rgba(37,99,235,0.3)] hover:-translate-y-px hover:shadow-[0_6px_18px_rgba(37,99,235,0.4)] transition-all disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed disabled:translate-y-0 disabled:hover:translate-y-0">
                     Proses pembayaran →
                 </button>
@@ -140,6 +140,7 @@
                 <label class="block mb-1.5 text-xs font-bold text-slate-500">Jumlah uang diterima</label>
                 <input type="number" id="cashReceived" placeholder="Masukkan jumlah uang..." oninput="calculateChange()"
                        class="w-full py-2.5 px-3.5 bg-slate-50 border border-slate-200 rounded-[9px] text-sm text-slate-900 outline-none focus:border-blue-600 transition-colors">
+                <div class="hidden text-[11px] text-red-600 mt-1.5 font-semibold" id="insufficientCashWarning">⚠️ Jumlah uang yang diterima tidak mencukupi.</div>
             </div>
 
             <div class="hidden bg-green-50 border border-green-200 py-3.5 rounded-xl text-center mb-4" id="changeDisplay">
@@ -239,7 +240,6 @@
                         <p class="text-[13px] font-semibold mb-1">Keranjang masih kosong</p>
                         <small class="text-[11px]">Pilih produk untuk memulai transaksi</small>
                     </div>`;
-                document.getElementById('checkoutBtn').disabled = true;
             } else {
                 container.innerHTML = cart.map((item, i) => `
                     <div class="bg-slate-50 border border-slate-200 py-2.5 px-3.5 rounded-[10px] mb-2 flex items-center gap-2.5 hover:border-blue-600 transition-colors">
@@ -256,7 +256,6 @@
                             <button onclick="removeItem(${i})" class="w-[26px] h-[26px] bg-red-50 border border-red-200 text-red-600 rounded-[7px] cursor-pointer text-xs flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors">🗑</button>
                         </div>
                     </div>`).join('');
-                document.getElementById('checkoutBtn').disabled = false;
             }
             updateSummary();
         }
@@ -315,6 +314,11 @@
         }
 
         function processPayment() {
+            if (cart.length === 0) {
+                alert('Keranjang belanja masih kosong. Silakan pilih produk terlebih dahulu.');
+                return;
+            }
+
             const total = cart.reduce((s, item) => s + item.harga * item.qty, 0);
             document.getElementById('modalTotal').textContent = 'Rp ' + total.toLocaleString('id-ID');
 
@@ -325,6 +329,7 @@
                 document.getElementById('cashInputGroup').classList.remove('hidden');
                 document.getElementById('cashReceived').value = '';
                 document.getElementById('changeDisplay').classList.add('hidden');
+                document.getElementById('insufficientCashWarning').classList.add('hidden');
                 document.getElementById('confirmPayBtn').disabled = true;
             } else {
                 document.getElementById('cashInputGroup').classList.add('hidden');
@@ -343,11 +348,17 @@
 
             if (change >= 0) {
                 document.getElementById('changeDisplay').classList.remove('hidden');
+                document.getElementById('insufficientCashWarning').classList.add('hidden');
                 document.getElementById('changeAmount').textContent = 'Rp ' + change.toLocaleString('id-ID');
                 document.getElementById('confirmPayBtn').disabled = false;
             } else {
                 document.getElementById('changeDisplay').classList.add('hidden');
                 document.getElementById('confirmPayBtn').disabled = true;
+                if (document.getElementById('cashReceived').value !== '') {
+                    document.getElementById('insufficientCashWarning').classList.remove('hidden');
+                } else {
+                    document.getElementById('insufficientCashWarning').classList.add('hidden');
+                }
             }
         }
 
