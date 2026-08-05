@@ -68,9 +68,6 @@ class TransaksiController extends Controller
             foreach ($validated['items'] as $item) {
                 $produk = Produk::lockForUpdate()->find($item['produk_id']);
 
-                // Validasi stok berlaku untuk semua metode pembayaran.
-                // Untuk QRIS, stok baru benar-benar dikurangi setelah pembayaran
-                // dikonfirmasi (lihat Transaksi::terapkanStatusMidtrans()).
                 $produk->pastikanStokCukup($item['jumlah']);
 
                 DetailTransaksi::create([
@@ -189,9 +186,6 @@ class TransaksiController extends Controller
             ->where('pengguna_id', session('user_id'))
             ->firstOrFail();
 
-        // Catat/perbarui waktu cetak struk untuk transaksi ini.
-        // updateOrCreate dipakai karena satu transaksi hanya punya satu baris log
-        // (relasi hasOne pada Model Transaksi) meskipun struk dicetak ulang beberapa kali.
         CetakStruk::updateOrCreate(
             ['transaksi_id' => $transaksi->id],
             ['waktu_cetak' => now()]

@@ -24,43 +24,34 @@ class Produk extends Model
         'deskripsi',
     ];
 
+    // Relasi produk dengan kategori
     public function kategori(): BelongsTo
     {
         return $this->belongsTo(Kategori::class, 'kategori_id');
     }
 
+    // Relasi produk dengan detail transaksi
     public function detailTransaksi(): HasMany
     {
         return $this->hasMany(DetailTransaksi::class, 'produk_id');
     }
 
-    /**
-     * Pastikan stok masih cukup untuk jumlah yang diminta.
-     * Dipakai saat transaksi dibuat (baik tunai maupun QRIS) untuk mencegah
-     * kasir memesan produk yang stoknya sudah habis/kurang.
-     *
-     * @throws \Exception jika stok tidak mencukupi
-     */
+    // Memastikan stok produk masih cukup untuk jumlah yang diminta
     public function pastikanStokCukup(int $jumlah): void
     {
+        // Jika stok lebih kecil dari jumlah yang diminta, tampilkan error
         if ($this->stok < $jumlah) {
             throw new \Exception("Stok produk '{$this->nama}' tidak mencukupi. Tersisa: {$this->stok}");
         }
     }
 
-    /**
-     * Kurangi stok produk sebanyak $jumlah.
-     * Business rule: stok tidak boleh dikurangi melebihi stok yang tersedia.
-     *
-     * Sebelumnya validasi ini ada di TransaksiController — dipindahkan ke sini
-     * supaya aturan "stok tidak boleh minus" konsisten dipakai di mana pun
-     * pengurangan stok terjadi (transaksi tunai, callback QRIS, polling status).
-     *
-     * @throws \Exception jika stok tidak mencukupi
-     */
+    // Mengurangi stok produk setelah transaksi berhasil
     public function kurangiStok(int $jumlah): void
     {
+        // Cek terlebih dahulu apakah stok mencukupi
         $this->pastikanStokCukup($jumlah);
+
+        // Kurangi stok di database sesuai jumlah transaksi
         $this->decrement('stok', $jumlah);
     }
 }
