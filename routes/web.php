@@ -38,9 +38,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 |--------------------------------------------------------------------------
 */
 Route::post('/midtrans/callback', [TransaksiController::class, 'callback'])
-     ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
      ->name('midtrans.callback');
-
 /*
 |--------------------------------------------------------------------------
 | PROTECTED AREA - Butuh Login
