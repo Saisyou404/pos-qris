@@ -6,14 +6,6 @@ use Midtrans\Config;
 use Midtrans\Snap;
 use Midtrans\Transaction;
 
-/**
- * Membungkus seluruh interaksi dengan payment gateway Midtrans.
- *
- * Sengaja dibuat sebagai Service terpisah (bukan method di Model), karena
- * Model seharusnya hanya bertanggung jawab atas data & aturan bisnis milik
- * aplikasi sendiri — bukan komunikasi ke sistem/API pihak ketiga.
- * Controller cukup memanggil service ini tanpa perlu tahu detail Midtrans.
- */
 class MidtransService
 {
     public function __construct()
@@ -24,9 +16,7 @@ class MidtransService
         Config::$is3ds        = config('midtrans.is_3ds');
     }
 
-    /**
-     * Minta Snap Token dari Midtrans untuk memulai pembayaran QRIS.
-     */
+    // minta snap token buat mulai pembayaran QRIS
     public function buatSnapToken(string $orderId, int $grossAmount): string
     {
         return Snap::getSnapToken([
@@ -37,10 +27,7 @@ class MidtransService
         ]);
     }
 
-    /**
-     * Verifikasi keaslian signature yang dikirim Midtrans lewat callback,
-     * supaya callback palsu (bukan dari Midtrans) tidak bisa mengubah status transaksi.
-     */
+    // cek keaslian callback dari Midtrans, biar gak ada yang bisa malsuin notifikasi
     public function verifikasiSignature(string $orderId, string $statusCode, string $grossAmount, string $signatureKey): bool
     {
         $hashed = hash('sha512', $orderId . $statusCode . $grossAmount . config('midtrans.server_key'));
@@ -48,9 +35,7 @@ class MidtransService
         return hash_equals($hashed, $signatureKey);
     }
 
-    /**
-     * Cek status transaksi terbaru langsung ke Midtrans (dipakai untuk polling).
-     */
+    // tanya langsung ke Midtrans, status transaksi ini sekarang gimana
     public function cekStatus(string $orderId): object
     {
         return Transaction::status($orderId);

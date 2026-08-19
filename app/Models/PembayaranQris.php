@@ -25,14 +25,13 @@ class PembayaranQris extends Model
         'waktu_callback' => 'datetime',
     ];
 
+    // Relasi: satu pembayaran QRIS punya satu Transaksi
     public function transaksi(): BelongsTo
     {
         return $this->belongsTo(Transaksi::class, 'transaksi_id');
     }
 
-    /**
-     * Tandai pembayaran QRIS sebagai berhasil.
-     */
+    // Tandai pembayaran berhasil
     public function tandaiBerhasil(?array $dataCallback = null): void
     {
         $this->status = 'berhasil';
@@ -45,9 +44,7 @@ class PembayaranQris extends Model
         $this->save();
     }
 
-    /**
-     * Tandai pembayaran QRIS sebagai kedaluwarsa/gagal.
-     */
+    // Tandai pembayaran kedaluwarsa/gagal
     public function tandaiKedaluwarsa(?array $dataCallback = null): void
     {
         $this->status = 'kedaluwarsa';

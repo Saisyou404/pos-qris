@@ -36,66 +36,55 @@ class Transaksi extends Model
         'kembalian'         => 'decimal:2',
     ];
 
-    // =========================================================
-    //  RELASI
-    // =========================================================
-
+    // Relasi ke kasir yang melayani transaksi ini
     public function pengguna(): BelongsTo
     {
         return $this->belongsTo(Pengguna::class, 'pengguna_id');
     }
 
+    // Daftar item yang dibeli dalam transaksi ini
     public function detailTransaksi(): HasMany
     {
         return $this->hasMany(DetailTransaksi::class, 'transaksi_id');
     }
 
+    // Data pembayaran QRIS, kalau metodenya QRIS
     public function pembayaranQris(): HasOne
     {
         return $this->hasOne(PembayaranQris::class, 'transaksi_id');
     }
 
+    // Catatan waktu struk dicetak
     public function cetakStruk(): HasOne
     {
         return $this->hasOne(CetakStruk::class, 'transaksi_id');
     }
 
-    // =========================================================
-    //  SCOPE
-    // =========================================================
-
+    // Filter transaksi berstatus dibayar
     public function scopeDibayar(Builder $query): Builder
     {
         return $query->where('status', 'dibayar');
     }
 
+    // Filter transaksi hari ini
     public function scopeHariIni(Builder $query): Builder
     {
         return $query->whereDate('tanggal_transaksi', today());
     }
 
+    // Filter transaksi milik kasir tertentu
     public function scopeMilikKasir(Builder $query, int $kasirId): Builder
     {
         return $query->where('pengguna_id', $kasirId);
     }
 
-    // =========================================================
-    //  BUSINESS LOGIC — dulu ada di TransaksiController
-    // =========================================================
-
-    /**
-     * Buat nomor invoice unik untuk transaksi baru.
-     */
+    // Membuat nomor invoice unik untuk transaksi baru
     public static function buatNomorInvoice(): string
     {
         return 'INV-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
     }
 
-    /**
-     * Hitung kembalian untuk pembayaran tunai.
-     *
-     * @throws \Exception jika uang diterima kurang dari total pembayaran
-     */
+    // Menghitung kembalian, menolak jika uang diterima kurang dari total
     public static function hitungKembalian(float $total, float $uangDiterima): float
     {
         if ($uangDiterima < $total) {
@@ -105,11 +94,8 @@ class Transaksi extends Model
         return $uangDiterima - $total;
     }
 
-    /**
-     * Statistik transaksi hari ini yang sudah dibayar.
-     * $kasirId = null  -> statistik gabungan seluruh kasir (untuk dashboard admin)
-     * $kasirId = angka -> statistik milik satu kasir saja (untuk dashboard/laporan kasir)
-     */
+    // Statistik transaksi hari ini
+    // $kasirId null = gabungan semua kasir, diisi = khusus satu kasir
     public static function statistikHarian(?int $kasirId = null): array
     {
         $query = self::query()->hariIni()->dibayar();
@@ -141,19 +127,15 @@ class Transaksi extends Model
         ];
     }
 
-    /**
-     * Terapkan hasil status transaksi dari Midtrans ke transaksi ini:
-     * update status, kurangi stok produk, dan update record pembayaran QRIS.
-     *
-     * Dipanggil baik dari callback webhook Midtrans maupun dari polling
-     * checkStatus(), supaya logikanya tidak duplikat di dua tempat.
-     */
+    // Menerapkan status dari Midtrans ke transaksi ini: update status,
+    // kurangi stok, dan update data pembayaran QRIS. Dipanggil dari
+    // callback webhook maupun dari polling checkStatus()
     public function terapkanStatusMidtrans(string $statusMidtrans, ?array $dataCallback = null): void
     {
         if (in_array($statusMidtrans, ['settlement', 'capture'])) {
 
             if ($this->status === 'dibayar') {
-                return; // sudah pernah diproses sebelumnya, jangan diulang
+                return; // sudah pernah diproses sebelumnya
             }
 
             $this->status = 'dibayar';

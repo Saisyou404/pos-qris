@@ -8,10 +8,7 @@ use App\Models\LaporanKasir;
 
 class KasirController extends Controller
 {
-    // =========================================================
     //  RIWAYAT TRANSAKSI
-    // =========================================================
-
     public function riwayat(Request $request)
     {
         $kasirId   = session('user_id');
@@ -40,10 +37,7 @@ class KasirController extends Controller
         ));
     }
 
-    // =========================================================
     //  LAPORAN HARIAN — INPUT
-    // =========================================================
-
     public function laporanInput()
     {
         $kasirId = session('user_id');
@@ -83,10 +77,7 @@ class KasirController extends Controller
         }
     }
 
-    // =========================================================
     //  LAPORAN HARIAN — RIWAYAT
-    // =========================================================
-
     public function laporanRiwayat(Request $request)
     {
         $kasirId = session('user_id');

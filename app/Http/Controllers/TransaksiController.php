@@ -16,11 +16,13 @@ class TransaksiController extends Controller
 {
     protected MidtransService $midtrans;
 
+    // Menerima MidtransService lewat constructor agar seluruh fungsi di Controller ini bisa memanggil Midtrans tanpa membuat objek baru berulang kali
     public function __construct(MidtransService $midtrans)
     {
         $this->midtrans = $midtrans;
     }
 
+    // Menampilkan halaman transaksi kasir, berisi daftar produk yang stoknya masih tersedia dan preview nomor transaksi berikutnya
     public function create()
     {
         $produks = Produk::with('kategori')
@@ -37,6 +39,7 @@ class TransaksiController extends Controller
         return view('kasir.transaksi', compact('produks', 'kategoris', 'nomorTransaksi'));
     }
 
+    // Menyimpan transaksi baru beserta item-itemnya, mengurangi stok (untuk tunai), dan membuat Snap Token QRIS (untuk QRIS) dalam satu database transaction
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -122,6 +125,7 @@ class TransaksiController extends Controller
         }
     }
 
+    // Endpoint webhook yang dipanggil server Midtrans untuk memperbarui status pembayaran QRIS; signature diverifikasi dulu sebelum status transaksi diproses
     public function callback(Request $request)
     {
         $signatureValid = $this->midtrans->verifikasiSignature(
@@ -151,6 +155,7 @@ class TransaksiController extends Controller
         });
     }
 
+    // Dipanggil berulang (polling) dari halaman kasir untuk mengecek status pembayaran QRIS terkini, sebagai jalur cadangan kalau callback Midtrans telat masuk
     public function checkStatus($invoiceNumber)
     {
         $transaksi = Transaksi::where('nomor_invoice', $invoiceNumber)
@@ -179,6 +184,7 @@ class TransaksiController extends Controller
         }
     }
 
+    // Menampilkan & mencatat waktu cetak struk transaksi milik kasir yang sedang login (updateOrCreate agar tidak duplikat saat dicetak ulang)
     public function cetakStruk($invoice)
     {
         $transaksi = Transaksi::with(['detailTransaksi.produk', 'pengguna'])

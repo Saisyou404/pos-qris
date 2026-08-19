@@ -67,12 +67,9 @@ class ProdukController extends Controller
     public function destroy($id)
     {
         $produk = Produk::findOrFail($id);
-
-        // Karena model Produk pakai SoftDeletes, ini tidak menghapus baris
-        // secara permanen — hanya mengisi kolom `deleted_at`. Produk akan
-        // otomatis hilang dari daftar & tidak bisa dipilih di kasir, tapi
-        // detail_transaksi historis yang mereferensikannya tetap utuh
-        // (FK produk_id sudah RESTRICT lagi, bukan CASCADE).
+        // Model Produk memakai SoftDeletes, sehingga baris ini tidak dihapus secara permanen 
+        // hanya kolom deleted_at yang diisi — produk otomatis hilang dari daftar & tidak bisa dipilih di kasir
+        // tapi detail_transaksi historis yang mereferensikannya tetap utuh (FK produk_id RESTRICT, bukan CASCADE).
         $produk->delete();
 
         return redirect('/admin/produk')->with('success', 'Produk berhasil dinonaktifkan. Riwayat transaksi terkait tetap aman.');

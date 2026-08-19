@@ -15,6 +15,7 @@ class Kategori extends Model
         'nama',
     ];
 
+    // Relasi: satu Kategori bisa punya banyak Produk
     public function produk(): HasMany
     {
         return $this->hasMany(Produk::class, 'kategori_id');

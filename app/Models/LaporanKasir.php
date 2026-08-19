@@ -32,14 +32,13 @@ class LaporanKasir extends Model
         'pendapatan_qris'  => 'float',
     ];
 
+    // Relasi: laporan ini dibuat oleh satu Pengguna (kasir)
     public function pengguna()
     {
         return $this->belongsTo(Pengguna::class, 'pengguna_id');
     }
 
-    /**
-     * Cek apakah kasir ini sudah submit laporan harian untuk hari ini.
-     */
+    // Cek apakah kasir ini sudah submit laporan harian untuk hari ini
     public static function sudahSubmitHariIni(int $kasirId): bool
     {
         return self::where('pengguna_id', $kasirId)
@@ -47,9 +46,7 @@ class LaporanKasir extends Model
             ->exists();
     }
 
-    /**
-     * Ambil laporan hari ini milik kasir (kalau ada).
-     */
+    // Ambil laporan hari ini milik kasir (kalau ada)
     public static function laporanHariIni(int $kasirId): ?self
     {
         return self::where('pengguna_id', $kasirId)
@@ -57,13 +54,8 @@ class LaporanKasir extends Model
             ->first();
     }
 
-    /**
-     * Buat laporan harian baru untuk kasir, dengan statistik penjualan
-     * diambil otomatis dari tabel transaksi (bukan dari input manual kasir),
-     * supaya datanya akurat dan tidak bisa dimanipulasi lewat form.
-     *
-     * @throws \Exception jika kasir sudah submit laporan hari ini
-     */
+    // Buat laporan harian baru, statistik diambil otomatis dari tabel transaksi
+    // (bukan dari input manual kasir), supaya datanya akurat dan tidak bisa dimanipulasi
     public static function buatLaporanHarian(int $kasirId, array $data): self
     {
         if (self::sudahSubmitHariIni($kasirId)) {
